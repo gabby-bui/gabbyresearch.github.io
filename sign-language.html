@@ -292,18 +292,12 @@ while len(samples) < num_samples:
     <p>I added keyboard controls to make the collection process smooth and interactive. Pressing 's' starts the collection process, and pressing 'q' quites the system. This would give me full control over when to start recording as well as when to stop, which is really important because I need to make sure I'm positioned correctly before the system starts saving samples.</p>
     
     <pre><code>key = cv2.waitKey(1) & 0xFF
-        if key == ord('s'):
-            collecting = True
-        elif key == ord('q'):
-            break</code></pre>
+    if key == ord('s'):
+        collecting = True
+    elif key == ord('q'):
+        break</code></pre>
     
-    <ul>
-        <li>Only save if I've pressed 's' to start AND a hand is detected</li>
-        <li><code>samples.append(landmarks)</code>: Add this hand position to our list</li>
-        <li><code>time.sleep(0.05)</code>: Wait 0.05 seconds between samples (so they're not all identical)</li>
-    </ul>
-    
-    <h4>Controls</h4>
+    <p>Once I've collected all the samples for a letter, the system saves them to a file. I convert the list of samples into a numpy array (which is better for machine learning) and save it as a <code>.npy</code> file named after the letter, like <code>A.npy</code> or <code>B.npy</code>. The <code>.npy</code> format is a special file format designed for numerical data that machine learning libraries can read really efficiently. After saving, the program prints a confirmation message showing how many samples were saved and where they were saved to.</p>
     
     <pre><code>key = cv2.waitKey(1) & 0xFF
 if key == ord('s'):
