@@ -219,25 +219,15 @@
 <div class="section">
     <h2>Part 1: Collecting data <code>collect_data.py</code></h2>
     
-    <p>Let me start by walking you through how I built the data collection tool. You can think of this as taking photos, but instead of saving images, we save the coordinates of where each finger is. To do this, I needed three main tools in Python. The first one is cv2 (OpenCV), which lets Python work with my webcam and process images. The second is mediapipe, which is Google's tool that can actually "see" hands and track finger positions in real-time. And finally, numpy helps me organize all those finger coordinates into arrays that the computer can work with efficiently.</p>
+    <p>Let me start by walking you through how I built the data collection tool. You can think of this as taking photos, but instead of saving images, we save the coordinates of where each finger is. To do this, I needed three main powerful tools in Python. The first one is <code>cv2</code> (OpenCV), which lets Python work with my webcam and process images. The second is <code>mediapipe</code>, which is Google's tool that can actually "see" hands and track finger positions in real-time. And finally, <code>numpy</code> would help me organize all those finger coordinates into arrays that the computer can work with efficiently.</p>
     
     <pre><code>import cv2
 import mediapipe as mp
 import numpy as np</code></pre>
     
-    <div class="technical">
-        <strong>What are these?</strong>
-        <ul>
-            <li><code>cv2</code> (OpenCV): Lets Python work with my webcam and images</li>
-            <li><code>mediapipe</code>: Google's tool that can "see" hands and track finger positions</li>
-            <li><code>numpy</code>: Helps organize numbers (all those finger coordinates!)</li>
-        </ul>
-        
-        <strong>Why do I need them?</strong><br>
-        I need to see the webcam feed (cv2), detect where my hand is (mediapipe), and save all the position data (numpy).
-    </div>
-    
-    <h4>Step 2: The DataCollector Class</h4>
+    <p>I'd actually like to think of this whole system as LEGO blocks, my favorite childhood game. Each and every tool has a really specific purpose and our job is to combine them together in the correct order and position in order to create the complete system.</p>
+
+    <p>Now, to organize all these tools and steps, I created something called a <code>DataCollected</code> class. I usually think of a class as a blueprint or recipe that groups together all the tools and steps I need in one organized place. When I initialize this class (that's what the <code>__init__</code> function does), it's like the setup phase where I load MediaPipe's hand detection tool and configure it. For example, I set <code>max_mum_hands=1</code> because I only want to track one hand at a time to keep things simple while I'm learning. I also set <code>min_detection_confidence=0.7</code>, which means the system will only detect hands if it's at least 70% confident since this is really important to help avoid false detections and random noise.</p>
     
     <pre><code>class DataCollector:
     def __init__(self):
