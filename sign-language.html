@@ -448,12 +448,11 @@ with open('models/scaler.pkl', 'wb') as f:
 </div>
 
 <div class="section">
-    <h2>Part 3: Real-Time Detection (real_time_detection.py)</h2>
+    <h2>Part 3: Real-Time Detection <code>real_time_detection.py</code></h2>
     
-    <h3>What Does This File Do?</h3>
-    <p>This is the exciting part! Now that we have a trained model, we can use our webcam to recognize sign language in real-time. The computer watches my hand and instantly tells me what letter I'm signing!</p>
-    
-    <h4>Step 1: Loading Everything We Need</h4>
+    <p>This is the exciting part where everything comes together! Now that I have a trained model, I can use my webcam to recognize sign language in real-time. The computer will watch my hand and instantly tell me what letter I'm signing. This is honestly the coolest part because it's when I can actually see the system working.</p>
+
+    <p>The <code>SignLanguageDetector</code> class is supposed to bring everything together. When I initialize it, the first thing it does is load those three files we saved during training, which are the trained model, the label encoder, and the scaler. It also sets up MediaPipe for hand detection (just like we did during data collection) and creates something called a prediction buffer that stores the last 5 predictions.</p>
     
     <pre><code>class SignLanguageDetector:
     def __init__(self, model_path='models/sign_language_model.h5'):
@@ -465,30 +464,18 @@ with open('models/scaler.pkl', 'wb') as f:
         with open('models/scaler.pkl', 'rb') as f:
             self.scaler = pickle.load(f)</code></pre>
     
-    <p><strong>What's happening:</strong></p>
-    <ul>
-        <li>Load the trained model</li>
-        <li>Load the label encoder (to convert numbers back to letters)</li>
-        <li>Load the scaler (to standardize hand positions the same way we did during training)</li>
-    </ul>
+    <p>The reason why I need to include a prediction buffer is because sometimes the model might be a little uncertain, especially when my hand is transitioning between positions. Without smoothing, the predictions might flicker rapidly between letters, which would be really distracting and hard to read. Hence, I need to keep track of the last 5 predictions and using the most common one so that I can get much smoother and more stable results. For example, if the last 5 predictions were [A, A, B, A, A], the most common is A (it appears 4 times), so we display "A" instead of letting that single "B" prediction show up as a flicker.</p>
     
-    <pre><code>        self.mp_hands = mp.solutions.hands
-        self.hands = self.mp_hands.Hands(...)
-        self.mp_draw = mp.solutions.drawing_utils
-        self.prediction_buffer = deque(maxlen=5)</code></pre>
+    <pre><code>self.mp_hands = mp.solutions.hands
+self.hands = self.mp_hands.Hands(
+    static_image_mode=False,
+    max_num_hands=1,
+    min_detection_confidence=0.7,
+    min_tracking_confidence=0.5)
+self.mp_draw = mp.solutions.drawing_utils
+self.prediction_buffer = deque(maxlen=5)</code></pre>
     
-    <p><strong>Setting up detection:</strong></p>
-    <ul>
-        <li>Initialize MediaPipe (same as data collection)</li>
-        <li><code>prediction_buffer = deque(maxlen=5)</code>: Store the last 5 predictions</li>
-    </ul>
-    
-    <div class="important">
-        <strong>What's a prediction buffer?</strong><br>
-        Sometimes the model might be uncertain and predictions might flicker between letters. By storing the last 5 predictions and taking the most common one, we get smoother, more stable results.
-    </div>
-    
-    <h4>Step 2: Normalizing Landmarks (Same as Training)</h4>
+    <p>Just like in the training phase, we need to normalize the landmarks before feeding them to the model. This function does the exact same normalization we did during training by centering the hand relative to the wrist and scaling it based on the middle finger. It's crucial that this normalization is identical to what we did during training, otherwise the model won't work correctly.</p>
     
     <pre><code>def normalize_landmarks(self, landmarks):
     landmarks = landmarks.reshape(21, 3)
@@ -498,134 +485,82 @@ with open('models/scaler.pkl', 'wb') as f:
         centered = centered / scale
     return centered.flatten()</code></pre>
     
-    <p>This is the SAME normalization we did during training. We MUST do the exact same preprocessing, otherwise the model won't work correctly!</p>
-    
-    <h4>Step 3: Making Predictions</h4>
+    <p>The prediction process happens in several steps. First, for each frame from the webcam, I convert it to RGB format (MediaPipe's requirement) and use MediaPipe to detect hand landmarks. If a hand is found, I extract all 21 landmarks, giving me those 63 numbers we've been working with.</p>
     
     <pre><code>def predict(self, frame):
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = self.hands.process(rgb_frame)
     
     if results.multi_hand_landmarks:
-        hand_landmarks = results.multi_hand_landmarks[0]</code></pre>
+        hand_landmarks = results.multi_hand_landmarks[0]
     
-    <p><strong>Step-by-step prediction:</strong></p>
-    <ol>
-        <li>Convert frame to RGB (MediaPipe requirement)</li>
-        <li>Detect hand landmarks</li>
-        <li>If a hand is found, continue...</li>
-    </ol>
-    
-    <pre><code>        landmarks = []
+        landmarks = []
         for lm in hand_landmarks.landmark:
             landmarks.extend([lm.x, lm.y, lm.z])
         landmarks = np.array(landmarks)</code></pre>
     
-    <p><strong>Extract coordinates:</strong> Get all 21 landmarks (63 numbers total)</p>
+    <p>Then, and this is crucial that, I apply the exact same normalization and scaling that we did during training. I normalize the landmarks to remove size and position variations, then scale them using the saved scaler. After preprocessing, I pass the scaled landmarks to the model using model.predict(). The model returns an array of probabilities, one for each letter. I use np.argmax to find which letter has the highest probability, and I also record the confidence level (how sure the model is about this prediction). Then I use the label encoder to convert that number back into an actual letter that humans can read.</p>
     
-    <pre><code>        normalized = self.normalize_landmarks(landmarks)
-        scaled = self.scaler.transform([normalized])</code></pre>
+    <pre><code>normalized = self.normalize_landmarks(landmarks)
+scaled = self.scaler.transform([normalized])
+            
+prediction = self.model.predict(scaled, verbose=0)
+class_idx = np.argmax(prediction)
+confidence = prediction[0][class_idx]
+label = self.label_encoder.inverse_transform([class_idx])[0]</code></pre>
     
-    <p><strong>Preprocess:</strong></p>
-    <ol>
-        <li>Normalize (adjust for hand size and position)</li>
-        <li>Scale (standardize using the saved scaler)</li>
-    </ol>
+    <p>After getting the prediction, I add it to the prediction buffer and calculate the smoothed result by finding the most common prediction among the last 5. If we have at least 3 predictions in the buffer, we use the most common one. Otherwise, we just use the current prediction. This smoothing process eliminates those annoying flickers and makes the predictions much more stable and readable.</p>
     
-    <pre><code>        prediction = self.model.predict(scaled, verbose=0)
-        class_idx = np.argmax(prediction)
-        confidence = prediction[0][class_idx]
-        label = self.label_encoder.inverse_transform([class_idx])[0]</code></pre>
-    
-    <p><strong>Get the prediction:</strong></p>
-    <ol>
-        <li><code>model.predict()</code>: Get probabilities for each letter</li>
-        <li><code>np.argmax()</code>: Find which letter has the highest probability</li>
-        <li><code>confidence</code>: How confident is the model? (0-1, or 0%-100%)</li>
-        <li><code>inverse_transform</code>: Convert the number back to a letter</li>
-    </ol>
-    
-    <pre><code>        self.prediction_buffer.append(label)
+    <pre><code>self.prediction_buffer.append(label)
+            
+    if len(self.prediction_buffer) >= 3:
+        smoothed_label = Counter(self.prediction_buffer).most_common(1)[0][0]
+    else:
+        smoothed_label = label
+            
+    return smoothed_label, confidence, hand_landmarks
         
-        if len(self.prediction_buffer) >= 3:
-            smoothed_label = Counter(self.prediction_buffer).most_common(1)[0][0]
-        else:
-            smoothed_label = label</code></pre>
-    
-    <p><strong>Smoothing predictions:</strong></p>
-    <ul>
-        <li>Add this prediction to the buffer</li>
-        <li>If we have at least 3 predictions, use the most common one</li>
-        <li>This prevents flickering between letters</li>
-    </ul>
-    
-    <div class="analogy">
-        <strong>Example:</strong> If the last 5 predictions were: [A, A, B, A, A]<br>
-        The most common is A (appears 4 times), so we display "A"
-    </div>
-    
-    <h4>Step 4: Running Real-Time Detection</h4>
+return None, 0, None</code></pre>
+
+    <p>The main detection loop is pretty straightforward. I open the webcam and continuously read frames. For each frame, I flip it horizontally (so it feels like looking in a mirror), make a prediction, and display the result on screen. I draw the hand landmarks so you can see what the computer is tracking, and if the model's confidence is above 70%, I display the predicted letter along with the confidence percentage. I chose 70% as the threshold because if the model is less confident than that, it's better to show nothing than to show a wrong prediction. The beautiful thing about this setup is that it all happens in real-time. The computer processes frames fast enough (usually around 30 frames per second or more) that there's no noticeable lag. I can sign different letters, and the predictions update almost instantly. When I want to quit, I just press 'q' on my keyboard, and the program cleanly closes the webcam and windows.</p>
     
     <pre><code>def run(self):
     cap = cv2.VideoCapture(0)
-    
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            break
         
-        frame = cv2.flip(frame, 1)
-        label, confidence, hand_lm = self.predict(frame)</code></pre>
-    
-    <p><strong>The main loop:</strong></p>
-    <ol>
-        <li>Open webcam</li>
-        <li>Forever (until 'q' is pressed):
-            <ul>
-                <li>Read a frame</li>
-                <li>Flip it (mirror image)</li>
-                <li>Make a prediction</li>
-            </ul>
-        </li>
-    </ol>
-    
-    <pre><code>        if hand_lm:
-            self.mp_draw.draw_landmarks(
-                frame, hand_lm, self.mp_hands.HAND_CONNECTIONS
-            )
+    print("Starting real-time detection. Press 'q' to quit.")
         
-        if label and confidence > 0.7:
-            text = f"{label} ({confidence:.1%})"
-            cv2.putText(frame, text, (10, 50),
-                       cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 3)</code></pre>
-    
-    <p><strong>Display results:</strong></p>
-    <ol>
-        <li>Draw hand landmarks on the screen</li>
-        <li>If confidence is above 70%, show the predicted letter</li>
-    </ol>
-    
-    <div class="important">
-        <strong>Why 70% threshold?</strong><br>
-        If the model is unsure (confidence < 70%), don't show anything. This prevents showing wrong predictions.
-    </div>
-    
-    <pre><code>        cv2.imshow('Sign Language Detection', frame)
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            frame = cv2.flip(frame, 1)
+            label, confidence, hand_lm = self.predict(frame)
+            
+            if hand_lm:
+                self.mp_draw.draw_landmarks(
+                    frame, hand_lm, self.mp_hands.HAND_CONNECTIONS
+                )
+            
+            if label and confidence > 0.7:
+                text = f"{label} ({confidence:.1%})"
+                cv2.putText(frame, text, (10, 50),
+                           cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 3)
+            
+            cv2.imshow('Sign Language Detection', frame)
+            
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
         
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-    
-    cap.release()
-    cv2.destroyAllWindows()</code></pre>
-    
-    <p><strong>Display and cleanup:</strong></p>
-    <ul>
-        <li>Show the video feed with predictions</li>
-        <li>Press 'q' to quit</li>
-        <li>Close webcam and windows when done</li>
-    </ul>
-</div>
+        cap.release()
+        cv2.destroyAllWindows()</code></pre>
 
+    <p>Finally, I have a simple main block that creates a SignLanguageDetector instance and runs it. This is what actually starts the real-time detection when I run the script.</p>
+    
+    <pre><code>if __name__ == "__main__":
+    detector = SignLanguageDetector()
+    detector.run()</code></pre>
+    
 <div class="section">
     <h2>Summary: The Complete System</h2>
     
