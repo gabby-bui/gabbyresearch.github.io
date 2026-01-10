@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Sign Language Recognition - Gabby Bui</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        .page-wrapper {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .toc-sidebar {
+            width: 250px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px;
+            flex-shrink: 0;
+        }
+
+        .toc-sidebar h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+
+        .toc-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .toc-sidebar a {
+            color: #555;
+            text-decoration: none;
+            display: block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+
+        .toc-sidebar a:hover {
+            background-color: #f0f0f0;
+            color: #3498db;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 900px;
+            padding: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .toc-sidebar {
+                display: none;
+            }
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            scroll-margin-top: 20px;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+        
+        h4 {
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        pre code {
+            background-color: transparent;
+            color: #f8f8f2;
+            padding: 0;
+        }
+        
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .motivation {
+            background-color: #fff;
+            padding: 20px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .section {
+            background-color: #fff;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .analogy {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .important {
+            background-color: #d4edda;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .technical {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        strong {
+            color: #2c3e50;
+        }
+        
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+    <aside class="toc-sidebar">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#motivation">Why This Project?</a></li>
+            <li><a href="#big-picture">The Big Picture</a></li>
+            <li><a href="#part1">Part 1: Data Collection</a></li>
+            <li><a href="#part2">Part 2: Training</a></li>
+            <li><a href="#part3">Part 3: Detection</a></li>
+            <li><a href="#seeing-it-work">Seeing It Work!</a></li>
+            <li><a href="#acknowledgement">Acknowledgement</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+
+    <div class="container">
+        <nav class="breadcrumb">
+            <a href="index.html">← Back to Home</a>
+        </nav>
+        
+<h1>Real-Time Sign Language Recognition System!</h1>
+<p style="color: #7f8c8d; font-size: 1.1em;">Built and written with ❤️ by Gabby Bui</p>
+
+<hr>
+
+<div class="motivation">
+    <h2 id="motivation">Why is this project deeply meaningful to me?</h2>
+    
+    <p>I was born and raised by my lovely single mom, who is deaf. We've been using Vietnamese Sign Language (VSL) to communicate with each other. However, since leaving Vietnam for high school in China, I realized how lonely she was as there's barely anyone else she could communicate with, as people don't really know VSL.</p>
+    
+    <p>Honestly, I don't want to blame anyone at all. As someone who is a language learner myself, I understand how difficult it is to learn sign language. It's not even a usual language with concrete grammar and vocabulary, as everything varies case by case depending on context. Interestingly, there's even a concept of "natural sign language," which people develop themselves, usually in rural areas without access to standard education, as well as there are even variations within VSL itself in different regions.</p>
+    
+    <p>When I was learning Mandarin, I really enjoyed using Duolingo. It helped me brush up on my language skills and get exposed to the language daily. So I thought to myself: why don't I actually create a whole Duolingo system for sign language?</p>
+    
+    <p>Now, when I really think about it, it's indeed harder than I thought. For once, creating new software requires a sophisticated system behind it. Also, I'm just a new learner, a freshman in my undergraduate year, trying to learn everything. But every time I think about my mom and what she has to go through, it really pushes me forward to learn computer vision and see how I can apply it to this case.</p>
+    
+    <p>Hence, this is my research writing, but also my journal of how I'm on my way to creating a site and trying to make a small impact in my own way. There's still a long way to go, but here we are!</p>
+
+    <div class="important">
+        I know sign language recognition systems exist already thanks to amazing researchers who've paved the way, but this is my first real independent project where I'm learning by building everything from scratch, debugging and all. More importantly, there's no system like this for Vietnamese Sign Language yet, and I want to understand the technology deeply enough to eventually build something that can actually help my mom and the Vietnamese deaf community.
+    </div>
+
+    <div style="display: flex; gap: 20px; margin-top: 25px;">
+    
+        <div style="width: 48%; display: flex; flex-direction: column; gap: 20px;">
+        
+            <figure style="margin: 0; text-align: center; width: 100%;">
+                <img src="my-mom-and-i2.jpg" alt="Gabby and her mom" style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <figcaption style="margin-top: 8px; font-size: 0.8em; color: #666; font-style: italic; line-height: 1.2;">
+                    My lovely mom and me at my very first TED talk
+                </figcaption>
+            </figure>
+
+            <figure style="margin: 0; text-align: center; width: 100%;">
+                <img src="mom-airport.png" alt="Selfie with mom" style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <figcaption style="margin-top: 8px; font-size: 0.8em; color: #666; font-style: italic; line-height: 1.2;">
+                    Us at the airport before I left Vietnam
+                </figcaption>
+            </figure>
+
+        </div>
+
+        <div style="width: 48%; display: flex; flex-direction: column; justify-content: center;">
+        
+            <figure style="margin: 0; text-align: center; width: 100%;">
+                <img src="my-mom2.jpg" alt="Mom signing I love you" style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <figcaption style="margin-top: 8px; font-size: 0.8em; color: #666; font-style: italic; line-height: 1.2;">
+                    My mom signing "I love you ❤️" in sign language
+                </figcaption>
+            </figure>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="section">
+    <h2 id="big-picture">The big picture of how this would work</h2>
+
+    <p>Before going deeper into how the coding works for me, I would love to walk you through quickly how the general system would look like to me. There are three main steps that I will carry out throughout the whole time. First, I would use my webcam to record my hand gestures for each letter through a data collection script called <code>collect_data.py</code>. The computer would "see" my hand and record the position of each finger. Then, the computer would "learn" to recognize patterns of my hand gestures for each letter through <code>train_model.py</code>. It's like teaching a child where this hand shape means 'A', this one means 'B', and so on. Finally, through <code>real_time_detection.py</code>, the computer can watch my hand through the webcam and tell me what letter I'm signing.
+    
+    <div class="analogy">
+        <strong>The main idea</strong> is that, firstly, I teach the computer by showing examples. Then, the computer practices and learns. Finally, it can (hopefully) recognize hand signs on its own!
+    </div>
+</div>
+
+<div class="section">
+    <h2 id="part1">Part 1: Collecting data <code>collect_data.py</code></h2>
+    
+    <p>Let me start by walking you through how I built the data collection tool. You can think of this as taking photos, but instead of saving images, we save the coordinates of where each finger is. To do this, I needed three main powerful tools in Python. The first one is <code>cv2</code> (OpenCV), which lets Python work with my webcam and process images. The second is <code>mediapipe</code>, which is Google's tool that can actually "see" hands and track finger positions in real-time. And finally, <code>numpy</code> would help me organize all those finger coordinates into arrays that the computer can work with efficiently.</p>
+    
+    <pre><code>import cv2
+import mediapipe as mp
+import numpy as np</code></pre>
+    
+    <p>I'd actually like to think of this whole system as LEGO blocks, my favorite childhood game. Each and every tool has a really specific purpose and our job is to combine them together in the correct order and position in order to create the complete system.</p>
+
+    <p>Now, to organize all these tools and steps, I created something called a <code>DataCollected</code> class. I usually think of a class as a blueprint or recipe that groups together all the tools and steps I need in one organized place. When I initialize this class (that's what the <code>__init__</code> function does), it's like the setup phase where I load MediaPipe's hand detection tool and configure it. For example, I set <code>max_mum_hands=1</code> because I only want to track one hand at a time to keep things simple while I'm learning. I also set <code>min_detection_confidence=0.7</code>, which means the system will only detect hands if it's at least 70% confident since this is really important to help avoid false detections and random noise.</p>
+    
+    <pre><code>class DataCollector:
+    def __init__(self):
+        self.mp_hands = mp.solutions.hands
+        self.hands = self.mp_hands.Hands(static_image_mode=False,
+            max_num_hands=1,
+            min_detection_confidence=0.7,
+            min_tracking_confidence=0.5)
+        self.mp_draw = mp.solutions.drawing_utils</code></pre>
+    
+    <p>The next step is to actually extract what we call "landmarks" from the hand. Landmarks are the key points on your hand, like fingertips, knuckles, and wrist. MediaPipe has the amazing ability to track 21 landmarks (points) on each hand in 3D space. And when I say 3D, I mean it captures not just the x and y position (left-right and up-down), but also the z coordinate, which tells us the depth or how far each point is from the camera. This three-dimensional understanding is really important because it means the system can recognize hand shapes from different angles and distances.</p>
+
+    <p>The <code>extract_landmarks</code> function is where the magic happens to me; however, this is also where I run into error all the time when I just first ran the code. After a while, I realize that the image format that the webcam took in is indeed different from the image format that MediaPipe needs. Hence, I have to convert the image from BGR (which is what the webcam gives me) to RGB (which is what MediaPipe needs), and these are just different color formats. Then MediaPipe processes the frame and looks for hands. If it finds a hand, I loop through all 21 landmarks and extract their x, y, and z coordinates, putting all 63 numbers (as we have 21 points × 3 coordinates) into one long list. This seems to look like a lot of numbers to me, but yes, that's exactly what the computer needs to understand the shape of my hand.</p>
+    
+    <pre><code>def extract_landmarks(self, frame):
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = self.hands.process(rgb_frame)
+    
+    if results.multi_hand_landmarks:
+        hand_landmarks = results.multi_hand_landmarks[0]
+        landmarks = []
+        for lm in hand_landmarks.landmark:
+            landmarks.extend([lm.x, lm.y, lm.z])
+        return np.array(landmarks), hand_landmarks
+    return None, None</code></pre>
+    
+    <p>Now comes the actual collection process. The <code>collect_samples</code> function is where I physically sit in front of my webcame and show it different hand shapes for each letter. I set it up so that when I press 's' on my keyboard, it starts collecting samples, and when I press 'q', it quits. The function takes in a label (e.g. "A","B", or "C") that tells it which letter I'm currently signing. I decided to collect 150 samples per letter because more data means better learning as the computer needs to see many examples to understand that different people make the same letter slightly differently, or even that I myself might make the letter slightly different each time. Should I make this project a real software, I would collect more data of each letter than just 150 samples, and I would collect from different people to train the function with different variations as well.</p>
+    
+    <pre><code>def collect_samples(self, label, num_samples=100, save_dir='data/collected'):
+    os.makedirs(save_dir, exist_ok=True)
+    cap = cv2.VideoCapture(0)
+    samples = []
+    print(f"Collecting data for '{label}'. Press 's' to start, 'q' to quit.")</code></pre>
+    
+    <p>The collection happens in a loop where the webcam continuosly reads frames. In order to make it feel more natural, I flip the frame horizontally so it's like looking in a mirror. For each frame where my hand is detected, the system draws those 21 landmarks as dots and lines on the screen so I can see what the computer is actually "seeing." This visual feedback I find extremely helpful because I then can make sure that my hand is properly positioned and all the landmarks are being tracked correctly.</p>
+    
+    <pre><code>collecting = False
+while len(samples) < num_samples:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    frame = cv2.flip(frame, 1)
+    landmarks, hand_lm = self.extract_landmarks(frame)</code></pre>
+    
+    <p>When I'm ready and press 's' to start colelcting, each detected hand position gets added to our samples list, with a small 0.05 second delay between each sample so they're not all identical. The system also displays helpful text on the screen in order to show me how many samples have been collected so far, which really helps me track my progress.</p>
+    
+    <pre><code>if hand_lm:
+    self.mp_draw.draw_landmarks(
+        frame, hand_lm, self.mp_hands.HAND_CONNECTIONS)
+    
+status = f"Collecting: {len(samples)}/{num_samples}" if collecting else "Press 's' to start"
+cv2.putText(frame, f"Sign: {label} | {status}", (10, 30),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            
+if collecting and landmarks is not None:
+    samples.append(landmarks)
+    time.sleep(0.05)
+            
+cv2.imshow('Data Collection', frame)</code></pre>
+    
+    <p>I added keyboard controls to make the collection process smooth and interactive. Pressing 's' starts the collection process, and pressing 'q' quites the system. This would give me full control over when to start recording as well as when to stop, which is really important because I need to make sure I'm positioned correctly before the system starts saving samples.</p>
+    
+    <pre><code>key = cv2.waitKey(1) & 0xFF
+if key == ord('s'):
+    collecting = True
+elif key == ord('q'):
+    break</code></pre>
+    
+    <p>Once I've collected all the samples for a letter, the system saves them to a file. I convert the list of samples into a numpy array (which is better for machine learning) and save it as a <code>.npy</code> file named after the letter, like <code>A.npy</code> or <code>B.npy</code>. The <code>.npy</code> format is a special file format designed for numerical data that machine learning libraries can read really efficiently. After saving, the program prints a confirmation message showing how many samples were saved and where they were saved to.</p>
+    
+    <pre><code>cap.release()
+cv2.destroyAllWindows()
+        
+if samples:
+    data = np.array(samples)
+    filepath = os.path.join(save_dir, f'{label}.npy')
+    np.save(filepath, data)
+    print(f"Saved {len(samples)} samples to {filepath}")
+        
+return samples</code></pre>
+    
+    <p>At the end of the script, I have a simple main loop that goes through all the letters of the alphabet (except J and Z, which involve motion and are harder to do with static images) and collects 150 samples for each one. It waits for me to press Enter before starting each new letter, which gives me time to get ready and position my hand correctly. This systematic approach is to make sure that I collect consistent, high-quality data for every letter.</p>
+    
+    <pre><code>if __name__ == "__main__":
+    collector = DataCollector()
+    
+    letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
+    
+    for letter in letters:
+        input(f"\nReady to collect '{letter}'? Press Enter to continue...")
+        collector.collect_samples(letter, num_samples=150)</code></pre>
+
+</div>
+
+<div class="section">
+    <h2 id="part2">Part 2: Training the Model <code>train_model.py</code></h2>
+    
+    <p>Now that I have all this data collected, the next step is to teach the computer to recognize patterns. This process is called "training a machine learning model," and you can think of it as the computer studying for a test. The computer looks at all our examples and learns what makes an 'A' different from a 'B', what makes a 'C' different from a 'D', and so on.</p>
+
+    <p>The first thing I need to do is load all the data I collected. The <code>load_data</code> function looks in the data folder and finds all those <code>.npy</code> files I saved earlier. For each file, the filename itself tells us what letter it represents, so "A.npy" contains all the hand positions for the letter A. I load all the hand positions into a variable called X (this is our input data) and create a corresponding list called y that labels each hand position with its letter. I actually like to think of this as a set of flashcards as X is the picture side showing the hand position, and y is the answer side showing what letter it represents.</p>
+    
+    <pre><code>def load_data(data_dir='data/collected'):
+    X, y = [], []
+    
+    for filename in os.listdir(data_dir):
+        if filename.endswith('.npy'):
+            label = filename.replace('.npy', '')
+            data = np.load(os.path.join(data_dir, filename))
+            X.extend(data)
+            y.extend([label] * len(data))
+    
+    return np.array(X), np.array(y)</code></pre>
+    
+    <p>Before I can train the model, there's a really important step called normalization. The reason behind it is that different people have different hand sizes, such as someone might have big hands, someone might have small hands. If I hold my hand close to the camera versus far away, the coordinates will be completely different. But we don't want the computer to focus on the size or position of the hand, as we want it to focus on the shape, and tada, that's what normalization does.</p>
+
+    <p>The normalization process works like this: First, I reshape the 63 numbers back into 21 points with x, y, z coordinates. Then I move everything relative to the wrist (landmark 0), so now the wrist is always at position (0, 0, 0). This removes the position factor. Next, I use landmark 9 (which is the base of the middle finger) as a reference for hand size, and I divide all the coordinates by this scale. This makes all hands the same "size" from the computer's perspective. Finally, I flatten everything back into one long list of 63 numbers. It's like taking photos of different cars and making them all the same size in the photo, so you can focus on whether it's a Toyota or a Honda, not whether it's big or small.</p>
+    
+    <pre><code>def normalize_landmarks(X):
+    X_normalized = []
+    
+    for sample in X:
+        landmarks = sample.reshape(21, 3)
+        centered = landmarks - landmarks[0]
+        scale = np.linalg.norm(centered[9])
+        if scale > 0:
+            centered = centered / scale
+        X_normalized.append(centered.flatten())
+    
+    return np.array(X_normalized)</code></pre>
+    
+    <p>Now comes the really cool part of building the neural network. I learned that the neural network is inspired by how brains work, that it's made up of layers of "neurons" (which are mathematical units) that learn patterns in the data. My network starts with an input layer that takes in those 63 numbers representing hand landmarks. Then it has three hidden layers with 128, 64, and 32 neurons respectively. Each layer looks for increasingly complex patterns. The first layer might notice simple things like "this finger is bent," the second layer might recognize "these three fingers are bent in a specific way," and the third layer might understand "this combination of bent fingers and hand orientation means something specific."</p>
+
+    <p>Between these layers, I add something called BatchNormalization, which stabilizes the learning process and helps the model train faster. I also add Dropout layers that randomly turn off some neurons during training. This might seem counterintuitive, but it's actually really important since it prevents the model from over-memorizing the training examples. It's just like when I'm learning for a test that if I only memorize specific problems without understanding the underlying concepts, I'll fail when I see new questions (and it actually happened to me haha). Dropout forces the model to learn general patterns rather than memorizing specific examples. The final layer has one neuron for each letter (24 neurons total), and it uses something called softmax activation. What softmax does is convert the network's outputs into probabilities that add up to 100%. So the output might look something like: 2% chance it's A, 1% chance it's B, 95% chance it's C, and so on. The computer can then just pick the letter with the highest probability.</p>
+    
+    <pre><code>def build_model(input_shape, num_classes):
+    model = models.Sequential([
+        layers.Input(shape=(input_shape,)),
+        layers.Dense(128, activation='relu'),
+        layers.BatchNormalization(),
+        layers.Dropout(0.3),
+        layers.Dense(64, activation='relu'),
+        layers.BatchNormalization(),
+        layers.Dropout(0.3),
+        layers.Dense(32, activation='relu'),
+        layers.Dropout(0.2),
+        layers.Dense(num_classes, activation='softmax')
+    ])
+    model.compile(
+        optimizer='adam',
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
+    )
+    
+    return model</code></pre>
+    
+   <p>Before training, I need to prepare the data in a specific way. First, I load all the data and normalize the landmarks as we discussed. Then I use something called a <code>LabelEncoder</code> to convert the letters into numbers as computers work with numbers internally, so 'A' becomes 0, 'B' becomes 1, 'C' becomes 2, and so on. This numerical encoding is necessary for the neural network to process the data.</p>
+    
+    <pre><code>def train():
+    X, y = load_data()
+    X = normalize_landmarks(X)
+    label_encoder = LabelEncoder()
+    y_encoded = label_encoder.fit_transform(y)</code></pre>
+    
+    <p>Next, I need to split my data into two groups: a training set (80% of the data) and a test set (20%). The training set is what the model learns from, and the test set is like a final exam to check if it really learned or just memorized. This is super important because if I test the model on the same data it trained on, I can't tell if it actually learned the patterns or just memorized specific examples. The test set consists of completely new examples the model has never seen before, so it gives us an honest assessment of how well the model will perform in the real world. I use <code>stratify=y_encoded</code> to make sure each letter has the same proportion in both the training and test sets.</p>
+    
+    <pre><code>X_train, X_test, y_train, y_test = train_test_split(
+    X, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
+)</code></pre>
+    
+    <p>I also apply one more standardization step using something called <code>StandardScaler.</code> Even though we already normalized the landmarks, this ensures all features have similar ranges, which helps the neural network learn more efficiently. It's a bit technical, but basically it makes sure no single feature dominates the learning process just because its numbers happen to be larger. I fit the scaler on the training data and then transform both the training and test data using the same scaling parameters.</p>
+    
+    <pre><code>scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)</code></pre>
+    
+    <p>Now I build the actual model using the function I defined earlier, and I can see a summary of the network architecture of how many parameters it has, what the shape of each layer is, and so on. This summary is really helpful for understanding exactly what the model looks like and making sure everything is configured correctly.</p>
+
+    <pre><code>model = build_model(X_train.shape[1], len(label_encoder.classes_))
+model.summary()</code></pre>
+
+    <p>The actual training process is where the model goes through all the training data multiple times since I set it to go through 100 times (these are called "epochs"). Each time through, the model looks at the examples, makes predictions, sees where it was wrong, and adjusts its internal parameters to do better next time. I process the data in batches of 32 examples at a time because this is more efficient than processing one example at a time. I also use something called early stopping with a patience of 10 epochs, which means if the model doesn't improve for 10 consecutive epochs, the training stops automatically. There's no point wasting time and computer resources if the model has already learned everything it can. Imagine studying for a test: each epoch is like reading through all your notes once, batch size is like studying in small chunks rather than trying to memorize everything at once, and early stopping is like knowing when you've studied enough and more studying won't actually help.</p>
+    
+    <pre><code>early_stop = tf.keras.callbacks.EarlyStopping(
+    monitor='val_loss', patience=10, restore_best_weights=True
+)
+
+history = model.fit(
+    X_train, y_train,
+    epochs=100,
+    batch_size=32,
+    validation_split=0.2,
+    callbacks=[early_stop],
+    verbose=1
+)</code></pre>
+    
+    <p>After training, I test the model on that test set we set aside earlier. I get predictions for all the test examples and compare them to the true labels. The <code>classification_report</code> here shows me detailed accuracy for each letter, so I can see things like "For letter A, the model got 95% correct. For letter B, 92% correct," and so on. This helps me identify if there are any specific letters the model struggles with, which could guide future improvements.</p>
+    
+    <pre><code>y_pred = np.argmax(model.predict(X_test), axis=1)
+print(classification_report(y_test, y_pred, 
+                            target_names=label_encoder.classes_))</code></pre>
+    
+    <p>Finally, I save three important files. First is the trained model itself (saved as a <code>.h5</code> file), which contains all those learned patterns and weights. Second is the label encoder (saved as a <code>.pkl</code> file), which remembers how to convert between numbers and letters since, again, the computer works with numbers internally, but we want to see actual letters. Third is the scaler (also a <code>.pkl</code> file), which remembers exactly how we standardized the data during training. We need this because when we use the model later for real-time detection, we have to preprocess new hand positions in exactly the same way, otherwise the model won't work correctly. All three files are saved in the models directory so we can load them later for real-time detection.</p>
+    
+    <pre><code>model.save('models/sign_language_model.h5')
+
+with open('models/label_encoder.pkl', 'wb') as f:
+    pickle.dump(label_encoder, f)
+
+with open('models/scaler.pkl', 'wb') as f:
+    pickle.dump(scaler, f)</code></pre>
+
+    <p>And now, let's get it run!</p>
+    
+    <pre><code>if __name__="__main__":
+    train()</code></pre>
+
+</div>
+
+<div class="section">
+    <h2 id="part3">Part 3: Real-Time Detection <code>real_time_detection.py</code></h2>
+    
+    <p>This is the exciting part where everything comes together! Now that I have a trained model, I can use my webcam to recognize sign language in real-time. The computer will watch my hand and instantly tell me what letter I'm signing. This is honestly the coolest part because it's when I can actually see the system working.</p>
+
+    <p>The <code>SignLanguageDetector</code> class is supposed to bring everything together. When I initialize it, the first thing it does is load those three files we saved during training, which are the trained model, the label encoder, and the scaler. It also sets up MediaPipe for hand detection (just like we did during data collection) and creates something called a prediction buffer that stores the last 5 predictions.</p>
+    
+    <pre><code>class SignLanguageDetector:
+    def __init__(self, model_path='models/sign_language_model.h5'):
+        self.model = tf.keras.models.load_model(model_path)
+        
+        with open('models/label_encoder.pkl', 'rb') as f:
+            self.label_encoder = pickle.load(f)
+        
+        with open('models/scaler.pkl', 'rb') as f:
+            self.scaler = pickle.load(f)</code></pre>
+    
+    <p>The reason why I need to include a prediction buffer is because sometimes the model might be a little uncertain, especially when my hand is transitioning between positions. Without smoothing, the predictions might flicker rapidly between letters, which would be really distracting and hard to read. Hence, I need to keep track of the last 5 predictions and using the most common one so that I can get much smoother and more stable results. For example, if the last 5 predictions were [A, A, B, A, A], the most common is A (it appears 4 times), so we display "A" instead of letting that single "B" prediction show up as a flicker.</p>
+    
+    <pre><code>self.mp_hands = mp.solutions.hands
+self.hands = self.mp_hands.Hands(
+    static_image_mode=False,
+    max_num_hands=1,
+    min_detection_confidence=0.7,
+    min_tracking_confidence=0.5)
+self.mp_draw = mp.solutions.drawing_utils
+self.prediction_buffer = deque(maxlen=5)</code></pre>
+    
+    <p>Just like in the training phase, we need to normalize the landmarks before feeding them to the model. This function does the exact same normalization we did during training by centering the hand relative to the wrist and scaling it based on the middle finger. It's crucial that this normalization is identical to what we did during training, otherwise the model won't work correctly.</p>
+    
+    <pre><code>def normalize_landmarks(self, landmarks):
+    landmarks = landmarks.reshape(21, 3)
+    centered = landmarks - landmarks[0]
+    scale = np.linalg.norm(centered[9])
+    if scale > 0:
+        centered = centered / scale
+    return centered.flatten()</code></pre>
+    
+    <p>The prediction process happens in several steps. First, for each frame from the webcam, I convert it to RGB format (MediaPipe's requirement) and use MediaPipe to detect hand landmarks. If a hand is found, I extract all 21 landmarks, giving me those 63 numbers we've been working with.</p>
+    
+    <pre><code>def predict(self, frame):
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    results = self.hands.process(rgb_frame)
+    
+    if results.multi_hand_landmarks:
+        hand_landmarks = results.multi_hand_landmarks[0]
+    
+        landmarks = []
+        for lm in hand_landmarks.landmark:
+            landmarks.extend([lm.x, lm.y, lm.z])
+        landmarks = np.array(landmarks)</code></pre>
+    
+    <p>Then, and this is crucial that, I apply the exact same normalization and scaling that we did during training. I normalize the landmarks to remove size and position variations, then scale them using the saved scaler. After preprocessing, I pass the scaled landmarks to the model using model.predict(). The model returns an array of probabilities, one for each letter. I use np.argmax to find which letter has the highest probability, and I also record the confidence level (how sure the model is about this prediction). Then I use the label encoder to convert that number back into an actual letter that humans can read.</p>
+    
+    <pre><code>normalized = self.normalize_landmarks(landmarks)
+scaled = self.scaler.transform([normalized])
+            
+prediction = self.model.predict(scaled, verbose=0)
+class_idx = np.argmax(prediction)
+confidence = prediction[0][class_idx]
+label = self.label_encoder.inverse_transform([class_idx])[0]</code></pre>
+    
+    <p>After getting the prediction, I add it to the prediction buffer and calculate the smoothed result by finding the most common prediction among the last 5. If we have at least 3 predictions in the buffer, we use the most common one. Otherwise, we just use the current prediction. This smoothing process eliminates those annoying flickers and makes the predictions much more stable and readable.</p>
+    
+    <pre><code>self.prediction_buffer.append(label)
+            
+    if len(self.prediction_buffer) >= 3:
+        smoothed_label = Counter(self.prediction_buffer).most_common(1)[0][0]
+    else:
+        smoothed_label = label
+            
+    return smoothed_label, confidence, hand_landmarks
+        
+return None, 0, None</code></pre>
+
+    <p>The main detection loop is pretty straightforward. I open the webcam and continuously read frames. For each frame, I flip it horizontally (so it feels like looking in a mirror), make a prediction, and display the result on screen. I draw the hand landmarks so you can see what the computer is tracking, and if the model's confidence is above 70%, I display the predicted letter along with the confidence percentage. I chose 70% as the threshold because if the model is less confident than that, it's better to show nothing than to show a wrong prediction. The beautiful thing about this setup is that it all happens in real-time. The computer processes frames fast enough (usually around 30 frames per second or more) that there's no noticeable lag. I can sign different letters, and the predictions update almost instantly. When I want to quit, I just press 'q' on my keyboard, and the program cleanly closes the webcam and windows.</p>
+    
+    <pre><code>def run(self):
+    cap = cv2.VideoCapture(0)
+        
+    print("Starting real-time detection. Press 'q' to quit.")
+        
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            frame = cv2.flip(frame, 1)
+            label, confidence, hand_lm = self.predict(frame)
+            
+            if hand_lm:
+                self.mp_draw.draw_landmarks(
+                    frame, hand_lm, self.mp_hands.HAND_CONNECTIONS
+                )
+            
+            if label and confidence > 0.7:
+                text = f"{label} ({confidence:.1%})"
+                cv2.putText(frame, text, (10, 50),
+                           cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 3)
+            
+            cv2.imshow('Sign Language Detection', frame)
+            
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        
+        cap.release()
+        cv2.destroyAllWindows()</code></pre>
+
+    <p>Finally, I have a simple main block that creates a SignLanguageDetector instance and runs it. This is what actually starts the real-time detection when I run the script.</p>
+    
+    <pre><code>if __name__ == "__main__":
+    detector = SignLanguageDetector()
+    detector.run()</code></pre>
+
+</div>
+    
+<div class="section">
+    <h2 id="seeing-it-work">Seeing it work!</h2>
+    
+    <p>After all that data collection, training, and coding, this is the moment I was waiting for. Actually seeing the system recognize my signs in real-time! The detection window shows the webcam feed with those 21 hand landmarks tracked as dots and lines, and when the model is confident enough (when it passes the 70% threshold that I set), the predicted letter appears in the top-left corner along with the confidence percentage.</p>
+    
+    <p>Here are some examples of the system working. When I sign the letter M, the model detects it with 100% confidence. The landmarks are tracking all my finger positions perfectly, and you can see how the system understands the shape my hand is making. Same thing happens with G. The model immediately recognizes the hand position and displays "G (100.0%)" at the top. And when I sign A, again, 100% confidence. It's honestly such a surreal feeling to see something I built from scratch actually working!</p>
+
+    <div style="display: flex; gap: 15px; margin-top: 25px;">
+        <figure style="margin: 0; text-align: center; width: 33%;">
+            <img src="letter-A.png" alt="Real-time detection showing letter M" style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <figcaption style="margin-top: 8px; font-size: 0.8em; color: #666; font-style: italic; line-height: 1.2;">
+                Letter A detected with 100% confidence
+            </figcaption>
+        </figure>
+    
+        <figure style="margin: 0; text-align: center; width: 33%;">
+            <img src="letter-G.png" alt="Real-time detection showing letter G" style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <figcaption style="margin-top: 8px; font-size: 0.8em; color: #666; font-style: italic; line-height: 1.2;">
+                Letter G detected with 100% confidence
+            </figcaption>
+        </figure>
+    
+        <figure style="margin: 0; text-align: center; width: 33%;">
+            <img src="letter-M.png" alt="Real-time detection showing letter A" style="width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <figcaption style="margin-top: 8px; font-size: 0.8em; color: #666; font-style: italic; line-height: 1.2;">
+                Letter M detected with 100% confidence
+            </figcaption>
+        </figure>
+    </div>
+
+    <p>Of course, it's not always 100% confident. Sometimes when my hand is in an ambiguous position or transitioning between letters, the confidence drops to 80% or 90%. That's actually a good thing, as it means the model knows when it's uncertain rather than confidently predicting the wrong letter. And remember that prediction buffer we talked about? It really helps smooth out those transitions. Without it, you'd see the predictions flickering rapidly between letters, but with the smoothing, the display is much more stable and readable.</p>
+    
+</div>
+
+<div class="section">
+    <h2 id="acknowledgement">Acknowledgement and reference</h2>
+
+    <p>This project wouldn't exist without the incredible support and guidance I've received from my professors at Macalester College, especially Professor Taryn Flock, my academic advisor, who has been supporting me from the very early stages of this project and constantly encouraging me to pursue what I'm passionate about. Professor Susan Fox and Lauren Milne have been absolute my lifesavers, who have frequently checked in with me and helped me navigate all the technical challenges I've encountered along the way. Their patience in answering my endless questions has been invaluable. I genuinely don't think I would have made it this far without their time and support.</p>
+
+    <p>I'd also like to acknowledge the incredible educational resources that taught me the foundations of machine learning and computer vision. Andrew Ng's Machine Learning Specialization on Coursera was where I first learned about neural networks, gradient descent, and all the fundamental concepts that power this project. His ability to explain complex topics in an intuitive way made machine learning feel accessible to me as a beginner. I literally watched his lectures over and over again until the concepts finally clicked.</p>
+
+    <p>On the technical side, this project stands on the shoulders of some amazing open-source tools and libraries. The MediaPipe hand tracking system developed by Google is what makes the real-time hand detection possible. The fact that it can track 21 hand landmarks at 30+ frames per second on a regular laptop is genuinely incredible. The research paper "MediaPipe Hands: On-device Real-time Hand Tracking" by Zhang et al. provides all the technical details about how it works. I'm using OpenCV for all the webcam and image processing operations. It's been the standard computer vision library for years and for good reason. For the machine learning side, I'm using TensorFlow and Keras, which provide high-level APIs that make building and training neural networks much more approachable than writing everything from scratch. And NumPy and Scikit-learn handle all the numerical computing and data preprocessing.</p>
+
+    <p>Here are the key technical references that I consulted throughout this project:</p>
+
+    <ul>
+        <li>Zhang, F., Bazarevsky, V., Vakunov, A., Tkachenka, A., Sung, G., Chang, C.-L., & Grundmann, M. (2020). MediaPipe Hands: On-device Real-time Hand Tracking. ArXiv.org. https://arxiv.org/abs/2006.10214. (This paper explains the architecture behind MediaPipe's hand tracking system.)</li>
+        <li><a href="https://www.coursera.org/specializations/machine-learning-introduction/paidmedia?utm_medium=sem&utm_source=gg&utm_campaign=b2c_namer_machine-learning-introduction_stanford_ftcof_specializations_px_dr_bau_gg_sem_pr-bd_us-ca_en_m_hyb_16-10_x&campaignid=685340575&adgroupid=46849728719&device=c&keyword=andrew%20ng%20machine%20learning&matchtype=b&network=g&devicemodel=&creativeid=724828298531&assetgroupid=&targetid=kwd-306493471180&extensionid=&placement=&gad_source=1&gad_campaignid=685340575&gbraid=0AAAAADdKX6Ynzuyyd1pcxWjDPvA_N5DZD&gclid=CjwKCAiAjojLBhAlEiwAcjhrDkm_CQ_xcs0HfaYF4Evhj_UIxT3_ooN82AvB9siUyXwJUwP_t9n7nBoCvpIQAvD_BwE">Machine Learning Specialization</a> (This course series taught me the fundamentals of neural networks, backpropagation, and practical machine learning techniques.)</li>
+        <li>Deep Learning. (2025, October 22). MIT Press. https://mitpress.mit.edu/9780262035613/deep-learning/ (It's the textbook I use to look up the definitions when I need to understand theory behind neural networks more in-depth.)</li>
+        <li>Deep Learning with Python, Second Edition. (2021). Manning Publications; Deep Learning with Python, Second Edition - François Chollet. https://www.manning.com/books/deep-learning-with-python-second-edition. (I use this practical guideline to understand how to implement neural networks with TensorFlow/Keras.)</li>
+    </ul>
+
+    <p>Finally, I want to acknowledge all the researchers and developers who have worked on sign language recognition before me. While I'm building this system from scratch to learn and eventually adapt it for Vietnamese Sign Language, I've been inspired by projects like the <a href="https://fingerspelling.xyz/">ASL fingerspelling game</a> by the American Society for Deaf Children, the <a href="https://www.dolphio.hu/en/project/signall/">SignAll system for Hungarian Sign Language</a> by the Budapest-based tech company SignAll, and countless other researchers who have dedicated their work to making technology more accessible for deaf communities. Their work showed me that this is possible, and their papers helped me understand the challenges and best practices in this field.</p>
+
+    <p>This project is my small contribution to a much larger effort to bridge communication gaps and make technology more inclusive. I'll still be updating as I'm moving forward in my project at the moment. I'm standing on the shoulders of giants, and I'm grateful for everyone who has paved the way.</p>
+</div>
+    
+<hr>
+
+<p style="text-align: center; color: #7f8c8d; margin-top: 40px;">
+    <em>Built and written with ❤️ by Gabby Bui | Macalester College Class of 2029</em>
+</p>
+
+    </div>
+</div>
+
+</body>
+</html>
