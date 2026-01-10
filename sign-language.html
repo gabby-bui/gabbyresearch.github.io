@@ -276,18 +276,18 @@ while len(samples) < num_samples:
     <p>When I'm ready and press 's' to start colelcting, each detected hand position gets added to our samples list, with a small 0.05 second delay between each sample so they're not all identical. The system also displays helpful text on the screen in order to show me how many samples have been collected so far, which really helps me track my progress.</p>
     
     <pre><code>if hand_lm:
-            self.mp_draw.draw_landmarks(
-                frame, hand_lm, self.mp_hands.HAND_CONNECTIONS)
+    self.mp_draw.draw_landmarks(
+        frame, hand_lm, self.mp_hands.HAND_CONNECTIONS)
     
-        status = f"Collecting: {len(samples)}/{num_samples}" if collecting else "Press 's' to start"
-        cv2.putText(frame, f"Sign: {label} | {status}", (10, 30),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+    status = f"Collecting: {len(samples)}/{num_samples}" if collecting else "Press 's' to start"
+    cv2.putText(frame, f"Sign: {label} | {status}", (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             
-        if collecting and landmarks is not None:
-            samples.append(landmarks)
-            time.sleep(0.05)
+    if collecting and landmarks is not None:
+        samples.append(landmarks)
+        time.sleep(0.05)
             
-        cv2.imshow('Data Collection', frame)</code></pre>
+    cv2.imshow('Data Collection', frame)</code></pre>
     
     <p>I added keyboard controls to make the collection process smooth and interactive. Pressing 's' starts the collection process, and pressing 'q' quites the system. This would give me full control over when to start recording as well as when to stop, which is really important because I need to make sure I'm positioned correctly before the system starts saving samples.</p>
     
