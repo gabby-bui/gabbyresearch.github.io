@@ -254,57 +254,49 @@ import numpy as np</code></pre>
         return np.array(landmarks), hand_landmarks
     return None, None</code></pre>
     
-    <p>Nơ comes the actual collection process. The <code>collect_samples</code> function is where I physically sit in front of my webcame and show it different hand shapes for each letter. I set it up so that when I press 's' on my keyboard, it starts collecting samples, and when I press 'q', it quits. The function takes in a label (e.g. "A","B", or "C") that tells it which letter I'm currently signing. I decided to collect 150 samples per letter because more data means better learning as the computer needs to see many examples to understand that different people make the same letter slightly differently, or even that I myself might make the letter slightly different each time. Should I make this project a real software, I would collect more data of each letter than just 150 samples, and I would collect from different people to train the function with different variations as well.</p>
+    <p>Now comes the actual collection process. The <code>collect_samples</code> function is where I physically sit in front of my webcame and show it different hand shapes for each letter. I set it up so that when I press 's' on my keyboard, it starts collecting samples, and when I press 'q', it quits. The function takes in a label (e.g. "A","B", or "C") that tells it which letter I'm currently signing. I decided to collect 150 samples per letter because more data means better learning as the computer needs to see many examples to understand that different people make the same letter slightly differently, or even that I myself might make the letter slightly different each time. Should I make this project a real software, I would collect more data of each letter than just 150 samples, and I would collect from different people to train the function with different variations as well.</p>
     
     <pre><code>def collect_samples(self, label, num_samples=100, save_dir='data/collected'):
     os.makedirs(save_dir, exist_ok=True)
     cap = cv2.VideoCapture(0)
-    samples = []</code></pre>
+    samples = []
+    print(f"Collecting data for '{label}'. Press 's' to start, 'q' to quit.")</code></pre>
     
-    <p><strong>What's happening here?</strong></p>
-    <ul>
-        <li><code>label</code>: What letter am I signing? (e.g., "A", "B", "C")</li>
-        <li><code>num_samples=100</code>: How many examples do I want to record? (more = better learning!)</li>
-        <li><code>save_dir</code>: Where to save the data</li>
-        <li><code>cap = cv2.VideoCapture(0)</code>: Open the webcam (0 means default camera)</li>
-        <li><code>samples = []</code>: Empty list to store all the hand positions</li>
-    </ul>
-    
-    <h4>The Collection Loop</h4>
+    <p>The collection happens in a loop where the webcam continuosly reads frames. In order to make it feel more natural, I flip the frame horizontally so it's like looking in a mirror. For each frame where my hand is detected, the system draws those 21 landmarks as dots and lines on the screen so I can see what the computer is actually "seeing." This visual feedback I find extremely helpful because I then can make sure that my hand is properly positioned and all the landmarks are being tracked correctly.</p>
     
     <pre><code>collecting = False
 while len(samples) < num_samples:
     ret, frame = cap.read()
     if not ret:
-        break</code></pre>
+        break
     
-    <ul>
-        <li><code>collecting = False</code>: Wait for me to press 's' before starting</li>
-        <li><code>while len(samples) < num_samples</code>: Keep going until we have enough samples</li>
-        <li><code>cap.read()</code>: Grab one frame (image) from the webcam</li>
-    </ul>
+    frame = cv2.flip(frame, 1)
+    landmarks, hand_lm = self.extract_landmarks(frame)</code></pre>
     
-    <h4>Making it Visual</h4>
+    <p>When I'm ready and press 's' to start colelcting, each detected hand position gets added to our samples list, with a small 0.05 second delay between each sample so they're not all identical. The system also displays helpful text on the screen in order to show me how many samples have been collected so far, which really helps me track my progress.</p>
     
-    <pre><code>frame = cv2.flip(frame, 1)
-landmarks, hand_lm = self.extract_landmarks(frame)
-
-if hand_lm:
-    self.mp_draw.draw_landmarks(
-        frame, hand_lm, self.mp_hands.HAND_CONNECTIONS
-    )</code></pre>
+    <pre><code>
+    if hand_lm:
+        self.mp_draw.draw_landmarks(
+            frame, hand_lm, self.mp_hands.HAND_CONNECTIONS
     
-    <ul>
-        <li><code>cv2.flip(frame, 1)</code>: Mirror the image (so it feels natural, like looking in a mirror)</li>
-        <li><code>extract_landmarks(frame)</code>: Get the hand positions</li>
-        <li><code>draw_landmarks</code>: Draw dots and lines on the screen so I can see what the computer sees</li>
-    </ul>
+    status = f"Collecting: {len(samples)}/{num_samples}" if collecting else "Press 's' to start"
+    cv2.putText(frame, f"Sign: {label} | {status}", (10, 30),
+        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            
+    if collecting and landmarks is not None:
+        samples.append(landmarks)
+        time.sleep(0.05)
+            
+    cv2.imshow('Data Collection', frame)</code></pre>
     
-    <h4>Saving the Data</h4>
+    <p>I added keyboard controls to make the collection process smooth and interactive. Pressing 's' starts the collection process, and pressing 'q' quites the system. This would give me full control over when to start recording as well as when to stop, which is really important because I need to make sure I'm positioned correctly before the system starts saving samples.</p>
     
-    <pre><code>if collecting and landmarks is not None:
-    samples.append(landmarks)
-    time.sleep(0.05)</code></pre>
+    <pre><code>key = cv2.waitKey(1) & 0xFF
+            if key == ord('s'):
+                collecting = True
+            elif key == ord('q'):
+                break</code></pre>
     
     <ul>
         <li>Only save if I've pressed 's' to start AND a hand is detected</li>
