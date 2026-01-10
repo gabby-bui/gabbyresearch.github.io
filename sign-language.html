@@ -279,25 +279,17 @@ while len(samples) < num_samples:
     self.mp_draw.draw_landmarks(
         frame, hand_lm, self.mp_hands.HAND_CONNECTIONS)
     
-    status = f"Collecting: {len(samples)}/{num_samples}" if collecting else "Press 's' to start"
-    cv2.putText(frame, f"Sign: {label} | {status}", (10, 30),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+status = f"Collecting: {len(samples)}/{num_samples}" if collecting else "Press 's' to start"
+cv2.putText(frame, f"Sign: {label} | {status}", (10, 30),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             
-    if collecting and landmarks is not None:
-        samples.append(landmarks)
-        time.sleep(0.05)
+if collecting and landmarks is not None:
+    samples.append(landmarks)
+    time.sleep(0.05)
             
-    cv2.imshow('Data Collection', frame)</code></pre>
+cv2.imshow('Data Collection', frame)</code></pre>
     
     <p>I added keyboard controls to make the collection process smooth and interactive. Pressing 's' starts the collection process, and pressing 'q' quites the system. This would give me full control over when to start recording as well as when to stop, which is really important because I need to make sure I'm positioned correctly before the system starts saving samples.</p>
-    
-    <pre><code>key = cv2.waitKey(1) & 0xFF
-    if key == ord('s'):
-        collecting = True
-    elif key == ord('q'):
-        break</code></pre>
-    
-    <p>Once I've collected all the samples for a letter, the system saves them to a file. I convert the list of samples into a numpy array (which is better for machine learning) and save it as a <code>.npy</code> file named after the letter, like <code>A.npy</code> or <code>B.npy</code>. The <code>.npy</code> format is a special file format designed for numerical data that machine learning libraries can read really efficiently. After saving, the program prints a confirmation message showing how many samples were saved and where they were saved to.</p>
     
     <pre><code>key = cv2.waitKey(1) & 0xFF
 if key == ord('s'):
@@ -305,50 +297,30 @@ if key == ord('s'):
 elif key == ord('q'):
     break</code></pre>
     
-    <p>Press 's' to start collecting, press 'q' to quit.</p>
+    <p>Once I've collected all the samples for a letter, the system saves them to a file. I convert the list of samples into a numpy array (which is better for machine learning) and save it as a <code>.npy</code> file named after the letter, like <code>A.npy</code> or <code>B.npy</code>. The <code>.npy</code> format is a special file format designed for numerical data that machine learning libraries can read really efficiently. After saving, the program prints a confirmation message showing how many samples were saved and where they were saved to.</p>
     
-    <h4>Saving to File</h4>
-    
-    <pre><code>if samples:
+    <pre><code>cap.release()
+cv2.destroyAllWindows()
+        
+if samples:
     data = np.array(samples)
     filepath = os.path.join(save_dir, f'{label}.npy')
     np.save(filepath, data)
-    print(f"Saved {len(samples)} samples to {filepath}")</code></pre>
+    print(f"Saved {len(samples)} samples to {filepath}")
+        
+return samples</code></pre>
     
-    <p>After collecting all samples:</p>
-    <ul>
-        <li>Convert the list to a numpy array (better for machine learning)</li>
-        <li>Save as <code>{label}.npy</code> (e.g., "A.npy", "B.npy")</li>
-        <li><code>.npy</code> is a special file format for numerical data</li>
-    </ul>
-    
-    <h4>Step 5: Collecting All Letters</h4>
+    <p>At the end of the script, I have a simple main loop that goes through all the letters of the alphabet (except J and Z, which involve motion and are harder to do with static images) and collects 150 samples for each one. It waits for me to press Enter before starting each new letter, which gives me time to get ready and position my hand correctly. This systematic approach is to make sure that I collect consistent, high-quality data for every letter.</p>
     
     <pre><code>if __name__ == "__main__":
     collector = DataCollector()
     
-    letters = ['A', 'B', 'C', ..., 'Y']
+    letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y']
     
     for letter in letters:
         input(f"\nReady to collect '{letter}'? Press Enter to continue...")
         collector.collect_samples(letter, num_samples=150)</code></pre>
-    
-    <p><strong>The Main Script:</strong></p>
-    <ul>
-        <li>Create a DataCollector</li>
-        <li>For each letter in the alphabet (except J and Z, which involve motion):
-            <ul>
-                <li>Wait for me to press Enter</li>
-                <li>Collect 150 samples of that letter</li>
-                <li>Save them to a file</li>
-            </ul>
-        </li>
-    </ul>
-    
-    <div class="analogy">
-        <strong>Why 150 samples?</strong><br>
-        More data = better learning! The computer needs to see many examples to understand that people make the same letter slightly differently.
-    </div>
+
 </div>
 
 <div class="section">
