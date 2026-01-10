@@ -13,9 +13,10 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
+            line-height: 1.7;
+            color: #2d3748;
+            background: linear-gradient(135deg, #faf8f5 0%, #f0ebe6 100%);
+            background-attachment: fixed;
         }
         
         .page-wrapper {
@@ -29,19 +30,22 @@
             position: sticky;
             top: 20px;
             height: fit-content;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
             margin: 20px;
             flex-shrink: 0;
+            border-left: 3px solid #d4a574;
         }
 
         .toc-sidebar h3 {
             margin-top: 0;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
             font-size: 1.1em;
-            color: #2c3e50;
+            color: #1a202c;
+            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .toc-sidebar ul {
@@ -51,22 +55,31 @@
         }
 
         .toc-sidebar li {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .toc-sidebar a {
-            color: #555;
+            color: #5a5a5a;
             text-decoration: none;
             display: block;
-            padding: 5px 10px;
-            border-radius: 4px;
-            transition: all 0.2s;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
             font-size: 0.9em;
+            border-left: 2px solid transparent;
         }
 
         .toc-sidebar a:hover {
-            background-color: #f0f0f0;
-            color: #3498db;
+            background-color: #faf5f0;
+            color: #b8956a;
+            transform: translateX(3px);
+        }
+
+        .toc-sidebar a.active {
+            background-color: #faf5f0;
+            color: #b8956a;
+            border-left: 2px solid #b8956a;
+            font-weight: 500;
         }
 
         .main-content {
@@ -80,20 +93,38 @@
                 display: none;
             }
         }
+
+        .breadcrumb {
+            margin-bottom: 25px;
+        }
+
+        .breadcrumb a {
+            color: #718096;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: #b8956a;
+        }
         
         h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2em;
+            color: #1a202c;
+            margin-bottom: 12px;
+            font-size: 2.3em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
         
         h2 {
-            color: #34495e;
-            margin-top: 40px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            color: #2d3748;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d4a574;
+            padding-bottom: 12px;
             scroll-margin-top: 20px;
+            font-weight: 600;
         }
         
         h3 {
@@ -109,24 +140,27 @@
         }
         
         p {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            font-size: 1.02em;
         }
         
         code {
-            background-color: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
+            background-color: #f7f3ed;
+            padding: 3px 7px;
+            border-radius: 4px;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
+            color: #8b6f47;
         }
         
         pre {
-            background-color: #2d2d2d;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
             color: #f8f8f2;
-            padding: 15px;
-            border-radius: 5px;
+            padding: 20px;
+            border-radius: 8px;
             overflow-x: auto;
-            margin: 15px 0;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
         pre code {
@@ -137,70 +171,92 @@
         
         ul, ol {
             margin-left: 30px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         
         li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         
         .motivation {
-            background-color: #fff;
-            padding: 20px;
-            border-left: 4px solid #3498db;
-            margin: 20px 0;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-left: 4px solid #d4a574;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
         .section {
-            background-color: #fff;
-            padding: 25px;
-            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            margin: 25px 0;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
         .analogy {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-left: 4px solid #ffc107;
-            margin: 15px 0;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #fff9e6 0%, #fff5db 100%);
+            padding: 18px;
+            border-left: 4px solid #f0c97d;
+            margin: 20px 0;
+            border-radius: 6px;
         }
         
         .important {
-            background-color: #d4edda;
-            padding: 15px;
-            border-left: 4px solid #28a745;
-            margin: 15px 0;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #d7f0d9 100%);
+            padding: 18px;
+            border-left: 4px solid #81c784;
+            margin: 20px 0;
+            border-radius: 6px;
         }
         
         .technical {
-            background-color: #e7f3ff;
-            padding: 15px;
-            border-left: 4px solid #2196F3;
-            margin: 15px 0;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #d1e8f7 100%);
+            padding: 18px;
+            border-left: 4px solid #64b5f6;
+            margin: 20px 0;
+            border-radius: 6px;
         }
         
         strong {
-            color: #2c3e50;
+            color: #1a202c;
+            font-weight: 600;
         }
         
         a {
-            color: #3498db;
+            color: #b8956a;
             text-decoration: none;
+            transition: color 0.2s;
         }
         
         a:hover {
+            color: #8b6f47;
             text-decoration: underline;
         }
         
         hr {
             border: none;
-            border-top: 1px solid #ddd;
-            margin: 30px 0;
+            border-top: 1px solid #e2d5c8;
+            margin: 35px 0;
+        }
+
+        figure {
+            margin: 20px 0;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: #718096;
+            margin-top: 8px;
+        }
+
+        img {
+            transition: transform 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
@@ -211,13 +267,13 @@
     <aside class="toc-sidebar">
         <h3>Table of Contents</h3>
         <ul>
-            <li><a href="#motivation">Why This Project?</a></li>
-            <li><a href="#big-picture">The Big Picture</a></li>
-            <li><a href="#part1">Part 1: Data Collection</a></li>
-            <li><a href="#part2">Part 2: Training</a></li>
-            <li><a href="#part3">Part 3: Detection</a></li>
-            <li><a href="#seeing-it-work">Seeing It Work!</a></li>
-            <li><a href="#acknowledgement">Acknowledgement</a></li>
+            <li><a href="#motivation" data-section="motivation">Why This Project?</a></li>
+            <li><a href="#big-picture" data-section="big-picture">The Big Picture</a></li>
+            <li><a href="#part1" data-section="part1">Part 1: Data Collection</a></li>
+            <li><a href="#part2" data-section="part2">Part 2: Training</a></li>
+            <li><a href="#part3" data-section="part3">Part 3: Detection</a></li>
+            <li><a href="#seeing-it-work" data-section="seeing-it-work">Seeing It Work!</a></li>
+            <li><a href="#acknowledgement" data-section="acknowledgement">Acknowledgement</a></li>
         </ul>
     </aside>
 
@@ -706,6 +762,43 @@ return None, 0, None</code></pre>
 
     </div>
 </div>
+
+<script>
+// Scroll spy for table of contents
+document.addEventListener('DOMContentLoaded', function() {
+    const sections = document.querySelectorAll('h2[id]');
+    const navLinks = document.querySelectorAll('.toc-sidebar a[data-section]');
+    
+    const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -35% 0px',
+        threshold: 0
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                
+                // Remove active class from all links
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to current link
+                const activeLink = document.querySelector(`.toc-sidebar a[data-section="${id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        });
+    }, observerOptions);
+    
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+});
+</script>
 
 </body>
 </html>
