@@ -212,7 +212,7 @@
     <p>Before going deeper into how the coding works for me, I would love to walk you through quickly how the general system would look like to me. There are three main steps that I will carry out throughout the whole time. First, I would use my webcam to record my hand gestures for each letter through a data collection script called <code>collect_data.py</code>. The computer would "see" my hand and record the position of each finger. Then, the computer would "learn" to recognize patterns of my hand gestures for each letter through <code>train_model.py</code>. It's like teaching a child where this hand shape means 'A', this one means 'B', and so on. Finally, through <code>real_time_detection.py</code>, the computer can watch my hand through the webcam and tell me what letter I'm signing.
     
     <div class="analogy">
-        <strong>We can also think of it like this:</strong> Firstly, I teach the computer by showing examples. Then, the computer practices and learns. Finally, it can (hopefully) recognize signs on its own!
+        <strong>The main idea</strong> is that, firstly, I teach the computer by showing examples. Then, the computer practices and learns. Finally, it can (hopefully) recognize hand signs on its own!
     </div>
 </div>
 
@@ -571,37 +571,32 @@ return None, 0, None</code></pre>
 </div>
 
 <div class="section">
-    <h2>The main idea</h2>
-    
-    <p>This is a computer vision system that uses machine learning to recognize American Sign Language letters in real-time. The entire pipeline can be broken down into three essential components that work together seamlessly.</p>
-
-    <p>First, we have the data collection phase. Using MediaPipe's hand tracking technology, we capture the 3D positions of 21 key points on the hand. These aren't just random points. They're strategically placed at joints and fingertips to capture the complete shape and orientation of the hand. For each letter, we collect 150 examples to account for natural variations in how people sign. This diversity in the training data is what allows the model to generalize well to new hand positions it hasn't seen before.</p>
-
-    <p>Second, we have the training phase, which is where machine learning comes in. We use a neural network with multiple layers that learn hierarchical representations of the hand shapes. The first layer might learn simple patterns like "finger bent" or "finger extended." The second layer combines these into more complex patterns like "three fingers bent in a specific configuration." The third layer understands even more nuanced patterns that distinguish between similar-looking letters. By training on thousands of examples, the network learns to map hand shapes to letters with high accuracy. The normalization and scaling steps ensure that the model focuses on shape rather than size or position, making it work for different people and different distances from the camera.</p>
-
-    <p>Third, we have the real-time detection phase, which is where everything comes to life. The system continuously captures frames from the webcam, detects the hand landmarks, preprocesses them in exactly the same way as during training, and feeds them through the trained neural network. The model outputs a probability distribution over all possible letters, and we display the most likely one if the confidence is high enough. The prediction buffer smooths out temporal inconsistencies, giving us stable, readable predictions. All of this happens fast enough that there's no noticeable lag. You can sign letters and see the predictions update in real-time.</p>
-
-    <p>What makes this work is the combination of computer vision (MediaPipe for hand tracking), machine learning (neural networks for pattern recognition), and careful engineering (normalization, smoothing, thresholding). None of these components would work well in isolation. It's the careful integration of all three that creates a system that actually feels magical to use. You sign a letter, and the computer instantly knows what you're signing.</p>
-    
-</div>
-
-<div class="section">
-    <h2>Challenges that I'm currently facing and how I'm planning to solve them?</h2>
-    
-    <p>A</p>
-</div>
-
-<div class="section">
     <h2>Acknowledgement and reference</h2>
 
-    <p></p>
+    <p>This project wouldn't exist without the incredible support and guidance I've received from my professors at Macalester College, especially Professor Taryn Flock, my academic advisor, who has been supporting me from the very early stages of this project and constantly encouraging me to pursue what I'm passionate about. Professor Susan Fox and Lauren Milne have been absolute my lifesavers, who have frequently checked in with me and helped me navigate all the technical challenges I've encountered along the way. Their patience in answering my endless questions has been invaluable. I genuinely don't think I would have made it this far without their time and support.</p>
 
+    <p>I'd also like to acknowledge the incredible educational resources that taught me the foundations of machine learning and computer vision. Andrew Ng's Machine Learning Specialization on Coursera was where I first learned about neural networks, gradient descent, and all the fundamental concepts that power this project. His ability to explain complex topics in an intuitive way made machine learning feel accessible to me as a beginner. I literally watched his lectures over and over again until the concepts finally clicked.</p>
+
+    <p>On the technical side, this project stands on the shoulders of some amazing open-source tools and libraries. The MediaPipe hand tracking system developed by Google is what makes the real-time hand detection possible. The fact that it can track 21 hand landmarks at 30+ frames per second on a regular laptop is genuinely incredible. The research paper "MediaPipe Hands: On-device Real-time Hand Tracking" by Zhang et al. provides all the technical details about how it works. I'm using OpenCV for all the webcam and image processing operations. It's been the standard computer vision library for years and for good reason. For the machine learning side, I'm using TensorFlow and Keras, which provide high-level APIs that make building and training neural networks much more approachable than writing everything from scratch. And NumPy and Scikit-learn handle all the numerical computing and data preprocessing.)</p>
+
+    <p>Here are the key technical references that I consulted throughout this project:</p>
+
+    <ul>
+        <li>Zhang, F., Bazarevsky, V., Vakunov, A., Tkachenka, A., Sung, G., Chang, C.-L., & Grundmann, M. (2020). MediaPipe Hands: On-device Real-time Hand Tracking. ArXiv.org. https://arxiv.org/abs/2006.10214. (This paper explains the architecture behind MediaPipe's hand tracking system.)</li>
+        <li><a href="https://www.coursera.org/specializations/machine-learning-introduction/paidmedia?utm_medium=sem&utm_source=gg&utm_campaign=b2c_namer_machine-learning-introduction_stanford_ftcof_specializations_px_dr_bau_gg_sem_pr-bd_us-ca_en_m_hyb_16-10_x&campaignid=685340575&adgroupid=46849728719&device=c&keyword=andrew%20ng%20machine%20learning&matchtype=b&network=g&devicemodel=&creativeid=724828298531&assetgroupid=&targetid=kwd-306493471180&extensionid=&placement=&gad_source=1&gad_campaignid=685340575&gbraid=0AAAAADdKX6Ynzuyyd1pcxWjDPvA_N5DZD&gclid=CjwKCAiAjojLBhAlEiwAcjhrDkm_CQ_xcs0HfaYF4Evhj_UIxT3_ooN82AvB9siUyXwJUwP_t9n7nBoCvpIQAvD_BwE">Machine Learning Specialization</a> (This course series taught me the fundamentals of neural networks, backpropagation, and practical machine learning techniques.)</li>
+        <li>Deep Learning. (2025, October 22). MIT Press. https://mitpress.mit.edu/9780262035613/deep-learning/ (It's the textbook I use to look up the definitions when I need to understand theory behind neural networks more in-depth.)</li>
+        <li>Deep Learning with Python, Second Edition. (2021). Manning Publications; Deep Learning with Python, Second Edition - François Chollet. https://www.manning.com/books/deep-learning-with-python-second-edition. (I use this practical guideline to understand how to implement neural networks with TensorFlow/Keras.)</li>
+    </ul>
+
+    <p>Finally, I want to acknowledge all the researchers and developers who have worked on sign language recognition before me. While I'm building this system from scratch to learn and eventually adapt it for Vietnamese Sign Language, I've been inspired by projects like the ASL recognition work by Abhishek Nagarajan, the SignAll system for Hungarian Sign Language, and countless other researchers who have dedicated their work to making technology more accessible for deaf communities. Their work showed me that this is possible, and their papers helped me understand the challenges and best practices in this field.</p>
+
+    <p>This project is my small contribution to a much larger effort to bridge communication gaps and make technology more inclusive. I'll still be updating as I'm moving forward in my project at the moment. I'm standing on the shoulders of giants, and I'm grateful for everyone who has paved the way.</p>
 </div>
     
 <hr>
 
 <p style="text-align: center; color: #7f8c8d; margin-top: 40px;">
-    <em>Built with ❤️ by Gabby Bui | Macalester College Class of 2029</em>
+    <em>Built and written with ❤️ by Gabby Bui | Macalester College Class of 2029</em>
 </p>
 
 </body>
