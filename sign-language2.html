@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Sign Language Recognition - Gabby Bui</title>
+    <title>Real-Time Hand Sign Language Recognition - Gabby Bui</title>
     <style>
         * {
             margin: 0;
@@ -270,8 +270,8 @@
             <li><a href="#motivation" data-section="motivation">Why This Project?</a></li>
             <li><a href="#big-picture" data-section="big-picture">The Big Picture</a></li>
             <li><a href="#part1" data-section="part1">Part 1: Data Collection</a></li>
-            <li><a href="#part2" data-section="part2">Part 2: Training</a></li>
-            <li><a href="#part3" data-section="part3">Part 3: Detection</a></li>
+            <li><a href="#part2" data-section="part2">Part 2: Training Model</a></li>
+            <li><a href="#part3" data-section="part3">Part 3: Hand Sign Detection</a></li>
             <li><a href="#seeing-it-work" data-section="seeing-it-work">Seeing It Work!</a></li>
             <li><a href="#acknowledgement" data-section="acknowledgement">Acknowledgement</a></li>
         </ul>
@@ -458,7 +458,7 @@ return samples</code></pre>
 </div>
 
 <div class="section">
-    <h2 id="part2">Part 2: Training the Model <code>train_model.py</code></h2>
+    <h2 id="part2">Part 2: Training the model <code>train_model.py</code></h2>
     
     <p>Now that I have all this data collected, the next step is to teach the computer to recognize patterns. This process is called "training a machine learning model," and you can think of it as the computer studying for a test. The computer looks at all our examples and learns what makes an 'A' different from a 'B', what makes a 'C' different from a 'D', and so on.</p>
 
@@ -582,7 +582,7 @@ with open('models/scaler.pkl', 'wb') as f:
 </div>
 
 <div class="section">
-    <h2 id="part3">Part 3: Real-Time Detection <code>real_time_detection.py</code></h2>
+    <h2 id="part3">Part 3: Real-time hand sign detection <code>real_time_detection.py</code></h2>
     
     <p>This is the exciting part where everything comes together! Now that I have a trained model, I can use my webcam to recognize sign language in real-time. The computer will watch my hand and instantly tell me what letter I'm signing. This is honestly the coolest part because it's when I can actually see the system working.</p>
 
