@@ -203,22 +203,12 @@
 </div>
 
 <div class="section">
-    <h2>The Big Picture: How Does This Work?</h2>
-    
-    <p>Before going deeper into how the coding works for me, I would love to walk you through quickly how the general system would look like to me:</p>
-    
-    <h3>There are three main steps that I will carry out throughout the whole time:</h3>
-    
-    <ol>
-        <li><strong>Collecting data</strong> (<code>collect_data.py</code>) : I would use my webcam to record my hand gestures for each letter. The computer would "see" my hand and record the position of each finger.</li>
-        
-        <li><strong>Training the Model</strong> (<code>train_model.py</code>) : The computer would then "learn" to recognize patterns of my hand gestures for each letter, it's like teaching a child: "This hand shape means 'A', this one means 'B'..."</li>
-        
-        <li><strong>Real-Time detection</strong> (<code>real_time_detection.py</code>) : Now the computer can watch my hand through the webcam and (hopefully) tell me what letter I'm signing!</li>
-    </ol>
+    <h2>The big picture of how does this work</h2>
+
+    <p>Before going deeper into how the coding works for me, I would love to walk you through quickly how the general system would look like to me. There are three main steps that I will carry out throughout the whole time. First, I would use my webcam to record my hand gestures for each letter through a data collection script called <code>collect_data.py</code>. The computer would "see" my hand and record the position of each finger. Then, the computer would "learn" to recognize patterns of my hand gestures for each letter through <code>train_model.py</code>. It's like teaching a child where this hand shape means 'A', this one means 'B', and so on. Finally, through <code>real_time_detection.py</code>, the computer can watch my hand through the webcam and tell me what letter I'm signing.
     
     <div class="analogy">
-        <strong>We can also think of it like this:</strong> Firstly, I teach the computer by showing examples. Then, the computer practices and learns. Finally, it can recognize signs on its own!
+        <strong>We can also think of it like this:</strong> Firstly, I teach the computer by showing examples. Then, the computer practices and learns. Finally, it can (hopefully) recognize signs on its own!
     </div>
 </div>
 
