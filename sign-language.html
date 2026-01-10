@@ -324,12 +324,11 @@ return samples</code></pre>
 </div>
 
 <div class="section">
-    <h2>Part 2: Training the Model (train_model.py)</h2>
+    <h2>Part 2: Training the Model <code>train_model.py</code></h2>
     
-    <h3>What Does This File Do?</h3>
-    <p>Now that we have collected data, we need to teach the computer to recognize patterns. This is called "training a machine learning model." Think of it as studying for a test—the computer looks at all our examples and learns what makes an 'A' different from a 'B'.</p>
-    
-    <h4>Step 1: Loading the Data</h4>
+    <p>Now that I have all this data collected, the next step is to teach the computer to recognize patterns. This process is called "training a machine learning model," and you can think of it as the computer studying for a test. The computer looks at all our examples and learns what makes an 'A' different from a 'B', what makes a 'C' different from a 'D', and so on.</p>
+
+    <p>The first thing I need to do is load all the data I collected. The <code>load_data</code> function looks in the data folder and finds all those <code>.npy</code> files I saved earlier. For each file, the filename itself tells us what letter it represents, so "A.npy" contains all the hand positions for the letter A. I load all the hand positions into a variable called X (this is our input data) and create a corresponding list called y that labels each hand position with its letter. I actually like to think of this as a set of flashcards as X is the picture side showing the hand position, and y is the answer side showing what letter it represents.</p>
     
     <pre><code>def load_data(data_dir='data/collected'):
     X, y = [], []
@@ -343,28 +342,9 @@ return samples</code></pre>
     
     return np.array(X), np.array(y)</code></pre>
     
-    <p><strong>What's this doing?</strong></p>
-    <ul>
-        <li>Look in the <code>data/collected</code> folder</li>
-        <li>For each <code>.npy</code> file (A.npy, B.npy, etc.):
-            <ul>
-                <li>The filename tells us the letter (label)</li>
-                <li>Load all the hand positions</li>
-                <li>Add them to our dataset</li>
-            </ul>
-        </li>
-    </ul>
-    
-    <div class="technical">
-        <strong>What are X and y?</strong>
-        <ul>
-            <li><code>X</code>: The input data (all the hand positions)</li>
-            <li><code>y</code>: The labels (what letter each hand position represents)</li>
-        </ul>
-        <p>Think of it like flashcards: X = the picture side (hand position), y = the answer side (the letter)</p>
-    </div>
-    
-    <h4>Step 2: Normalizing the Data</h4>
+    <p>Before I can train the model, there's a really important step called normalization. The reason behind it is that different people have different hand sizes, such as someone might have big hands, someone might have small hands. If I hold my hand close to the camera versus far away, the coordinates will be completely different. But we don't want the computer to focus on the size or position of the hand, as we want it to focus on the shape, and tada, that's what normalization does.</p>
+
+    <p>The normalization process works like this: First, I reshape the 63 numbers back into 21 points with x, y, z coordinates. Then I move everything relative to the wrist (landmark 0), so now the wrist is always at position (0, 0, 0). This removes the position factor. Next, I use landmark 9 (which is the base of the middle finger) as a reference for hand size, and I divide all the coordinates by this scale. This makes all hands the same "size" from the computer's perspective. Finally, I flatten everything back into one long list of 63 numbers. It's like taking photos of different cars and making them all the same size in the photo, so you can focus on whether it's a Toyota or a Honda, not whether it's big or small.</p>
     
     <pre><code>def normalize_landmarks(X):
     X_normalized = []
@@ -379,25 +359,9 @@ return samples</code></pre>
     
     return np.array(X_normalized)</code></pre>
     
-    <div class="important">
-        <strong>Why normalize?</strong><br>
-        Different people have different hand sizes. Someone might have big hands, someone might have small hands. If I hold my hand close to the camera vs. far away, the coordinates are different. We need to "standardize" everything so the computer focuses on the SHAPE of the hand, not its size or position.
-    </div>
-    
-    <p><strong>What's happening:</strong></p>
-    <ol>
-        <li><code>reshape(21, 3)</code>: Organize the 63 numbers into 21 points with (x, y, z)</li>
-        <li><code>centered = landmarks - landmarks[0]</code>: Move everything relative to the wrist (landmark 0). Now the wrist is at position (0, 0, 0)</li>
-        <li><code>scale = np.linalg.norm(centered[9])</code>: Use landmark 9 (middle finger base) as a reference for hand size</li>
-        <li><code>centered / scale</code>: Divide everything by this scale to make all hands the same "size"</li>
-        <li><code>flatten()</code>: Convert back to one long list of 63 numbers</li>
-    </ol>
-    
-    <div class="analogy">
-        <strong>Analogy:</strong> It's like taking photos of different cars and making them all the same size in the photo, so you can focus on whether it's a Toyota or a Honda, not whether it's big or small.
-    </div>
-    
-    <h4>Step 3: Building the Neural Network</h4>
+    <p>Now comes the really cool part of building the neural network. I learned that the neural network is inspired by how brains work, that it's made up of layers of "neurons" (which are mathematical units) that learn patterns in the data. My network starts with an input layer that takes in those 63 numbers representing hand landmarks. Then it has three hidden layers with 128, 64, and 32 neurons respectively. Each layer looks for increasingly complex patterns. The first layer might notice simple things like "this finger is bent," the second layer might recognize "these three fingers are bent in a specific way," and the third layer might understand "this combination of bent fingers and hand orientation means something specific."</p>
+
+    <p>Between these layers, I add something called BatchNormalization, which stabilizes the learning process and helps the model train faster. I also add Dropout layers that randomly turn off some neurons during training. This might seem counterintuitive, but it's actually really important since it prevents the model from over-memorizing the training examples. It's just like when I'm learning for a test that if I only memorize specific problems without understanding the underlying concepts, I'll fail when I see new questions (and it actually happened to me haha). Dropout forces the model to learn general patterns rather than memorizing specific examples. The final layer has one neuron for each letter (24 neurons total), and it uses something called softmax activation. What softmax does is convert the network's outputs into probabilities that add up to 100%. So the output might look something like: 2% chance it's A, 1% chance it's B, 95% chance it's C, and so on. The computer can then just pick the letter with the highest probability.</p>
     
     <pre><code>def build_model(input_shape, num_classes):
     model = models.Sequential([
@@ -411,114 +375,41 @@ return samples</code></pre>
         layers.Dense(32, activation='relu'),
         layers.Dropout(0.2),
         layers.Dense(num_classes, activation='softmax')
-    ])</code></pre>
+    ])
+    model.compile(
+        optimizer='adam',
+        loss='sparse_categorical_crossentropy',
+        metrics=['accuracy']
+    )
     
-    <div class="important">
-        <strong>What's a neural network?</strong><br>
-        A neural network is inspired by how brains work. It's layers of "neurons" (mathematical units) that learn patterns.
-    </div>
+    return model</code></pre>
     
-    <p><strong>Breaking down each layer:</strong></p>
+   <p>Before training, I need to prepare the data in a specific way. First, I load all the data and normalize the landmarks as we discussed. Then I use something called a <code>LabelEncoder</code> to convert the letters into numbers as computers work with numbers internally, so 'A' becomes 0, 'B' becomes 1, 'C' becomes 2, and so on. This numerical encoding is necessary for the neural network to process the data.</p>
     
-    <ol>
-        <li><strong>Input Layer</strong>: Takes in the 63 numbers (our hand landmarks)</li>
-        
-        <li><strong>Dense(128, activation='relu')</strong>:
-            <ul>
-                <li>First hidden layer with 128 neurons</li>
-                <li>Each neuron looks at all 63 input numbers and learns a pattern</li>
-                <li><code>relu</code> = "rectified linear unit" (just a math function that helps learning)</li>
-            </ul>
-        </li>
-        
-        <li><strong>BatchNormalization()</strong>: Stabilizes learning (helps the computer learn faster and better)</li>
-        
-        <li><strong>Dropout(0.3)</strong>:
-            <ul>
-                <li>Randomly "turn off" 30% of neurons during training</li>
-                <li>Why? Prevents over-memorization (overfitting)</li>
-                <li>Like studying for a test: if you only memorize specific examples, you'll fail on new questions. Dropout forces the model to learn general patterns.</li>
-            </ul>
-        </li>
-        
-        <li><strong>Dense(64)</strong>: Second layer with 64 neurons (looking for more complex patterns)</li>
-        
-        <li><strong>Dense(32)</strong>: Third layer with 32 neurons (even more complex patterns)</li>
-        
-        <li><strong>Dense(num_classes, activation='softmax')</strong>:
-            <ul>
-                <li>Final layer with one neuron per letter</li>
-                <li><code>softmax</code> converts outputs to probabilities</li>
-                <li>Output: [0.02, 0.01, 0.95, ...] = "2% chance it's A, 1% chance it's B, 95% chance it's C!"</li>
-            </ul>
-        </li>
-    </ol>
+    <pre><code>def train():
+    X, y = load_data()
+    X = normalize_landmarks(X)
+    label_encoder = LabelEncoder()
+    y_encoded = label_encoder.fit_transform(y)</code></pre>
     
-    <div class="analogy">
-        <strong>Analogy:</strong> Think of it like a detective investigating a crime:
-        <ul>
-            <li>Layer 1: Looks at basic clues</li>
-            <li>Layer 2: Connects clues to form theories</li>
-            <li>Layer 3: Narrows down suspects</li>
-            <li>Final layer: "The answer is... letter C!"</li>
-        </ul>
-    </div>
-    
-    <h4>Compiling the Model</h4>
-    
-    <pre><code>model.compile(
-    optimizer='adam',
-    loss='sparse_categorical_crossentropy',
-    metrics=['accuracy']
-)</code></pre>
-    
-    <p><strong>What's compiling?</strong> We're telling the computer HOW to learn:</p>
-    <ul>
-        <li><code>optimizer='adam'</code>: The learning strategy (Adam is a popular, effective method)</li>
-        <li><code>loss='sparse_categorical_crossentropy'</code>: How to measure mistakes (good for classification)</li>
-        <li><code>metrics=['accuracy']</code>: Track how many predictions are correct</li>
-    </ul>
-    
-    <h4>Step 4: Preparing Data for Training</h4>
-    
-    <pre><code>X, y = load_data()
-X = normalize_landmarks(X)
-label_encoder = LabelEncoder()
-y_encoded = label_encoder.fit_transform(y)</code></pre>
-    
-    <p><strong>What's happening:</strong></p>
-    <ol>
-        <li>Load all the data</li>
-        <li>Normalize it (make all hands the same "size")</li>
-        <li>Convert letters to numbers: A→0, B→1, C→2, etc. (computers work with numbers, not letters!)</li>
-    </ol>
-    
-    <h4>Splitting the Data</h4>
+    <p>Next, I need to split my data into two groups: a training set (80% of the data) and a test set (20%). The training set is what the model learns from, and the test set is like a final exam to check if it really learned or just memorized. This is super important because if I test the model on the same data it trained on, I can't tell if it actually learned the patterns or just memorized specific examples. The test set consists of completely new examples the model has never seen before, so it gives us an honest assessment of how well the model will perform in the real world. I use <code>stratify=y_encoded</code> to make sure each letter has the same proportion in both the training and test sets.</p>
     
     <pre><code>X_train, X_test, y_train, y_test = train_test_split(
     X, y_encoded, test_size=0.2, random_state=42, stratify=y_encoded
 )</code></pre>
     
-    <p>We divide our data into two groups:</p>
-    <ul>
-        <li><strong>Training set (80%)</strong>: The computer learns from these</li>
-        <li><strong>Test set (20%)</strong>: We use these to check if the computer REALLY learned</li>
-    </ul>
-    
-    <div class="analogy">
-        <strong>Why split?</strong><br>
-        It's like a student taking practice tests vs. the real exam. If you give the student the answers to the exam beforehand, you can't tell if they actually learned or just memorized. The test set is the "real exam" the model hasn't seen.
-    </div>
-    
-    <h4>Scaling the Data</h4>
+    <p>I also apply one more standardization step using something called <code>StandardScaler.</code> Even though we already normalized the landmarks, this ensures all features have similar ranges, which helps the neural network learn more efficiently. It's a bit technical, but basically it makes sure no single feature dominates the learning process just because its numbers happen to be larger. I fit the scaler on the training data and then transform both the training and test data using the same scaling parameters.</p>
     
     <pre><code>scaler = StandardScaler()
 X_train = scaler.fit_transform(X_train)
 X_test = scaler.transform(X_test)</code></pre>
     
-    <p>Even after normalization, we apply one more standardization. This makes all features have similar ranges and helps the neural network learn better.</p>
-    
-    <h4>Step 5: Training the Model</h4>
+    <p>Now I build the actual model using the function I defined earlier, and I can see a summary of the network architecture of how many parameters it has, what the shape of each layer is, and so on. This summary is really helpful for understanding exactly what the model looks like and making sure everything is configured correctly.</p>
+
+    <pre><code>model = build_model(X_train.shape[1], len(label_encoder.classes_))
+model.summary()</code></pre>
+
+    <p>The actual training process is where the model goes through all the training data multiple times since I set it to go through 100 times (these are called "epochs"). Each time through, the model looks at the examples, makes predictions, sees where it was wrong, and adjusts its internal parameters to do better next time. I process the data in batches of 32 examples at a time because this is more efficient than processing one example at a time. I also use something called early stopping with a patience of 10 epochs, which means if the model doesn't improve for 10 consecutive epochs, the training stops automatically. There's no point wasting time and computer resources if the model has already learned everything it can. Imagine studying for a test: each epoch is like reading through all your notes once, batch size is like studying in small chunks rather than trying to memorize everything at once, and early stopping is like knowing when you've studied enough and more studying won't actually help.</p>
     
     <pre><code>early_stop = tf.keras.callbacks.EarlyStopping(
     monitor='val_loss', patience=10, restore_best_weights=True
@@ -533,45 +424,13 @@ history = model.fit(
     verbose=1
 )</code></pre>
     
-    <p><strong>What's happening:</strong></p>
-    <ul>
-        <li><code>epochs=100</code>: Go through the entire dataset 100 times</li>
-        <li><code>batch_size=32</code>: Process 32 examples at a time (more efficient)</li>
-        <li><code>validation_split=0.2</code>: Use 20% of training data to check progress during training</li>
-    </ul>
-    
-    <p><strong>Early Stopping:</strong></p>
-    <ul>
-        <li><code>patience=10</code>: If the model doesn't improve for 10 epochs, stop training</li>
-        <li>Why? Prevents wasting time if the model has learned everything it can</li>
-    </ul>
-    
-    <div class="analogy">
-        <strong>Analogy:</strong> Imagine studying for a test:
-        <ul>
-            <li>Each epoch = reading through all your notes once</li>
-            <li>Batch size = studying in small chunks rather than all at once</li>
-            <li>Early stopping = knowing when you've studied enough and more studying won't help</li>
-        </ul>
-    </div>
-    
-    <h4>Step 6: Evaluating the Model</h4>
+    <p>After training, I test the model on that test set we set aside earlier. I get predictions for all the test examples and compare them to the true labels. The <code>classification_report</code> here shows me detailed accuracy for each letter, so I can see things like "For letter A, the model got 95% correct. For letter B, 92% correct," and so on. This helps me identify if there are any specific letters the model struggles with, which could guide future improvements.</p>
     
     <pre><code>y_pred = np.argmax(model.predict(X_test), axis=1)
 print(classification_report(y_test, y_pred, 
                             target_names=label_encoder.classes_))</code></pre>
     
-    <p><strong>Testing the Model:</strong></p>
-    <ul>
-        <li>Use the test set (the "exam")</li>
-        <li><code>model.predict(X_test)</code>: Get predictions for all test examples</li>
-        <li><code>np.argmax</code>: Convert probabilities to actual letter predictions</li>
-        <li><code>classification_report</code>: Show accuracy for each letter</li>
-    </ul>
-    
-    <p>This tells us: "For letter A, the model got 95% correct. For letter B, 92% correct..." etc.</p>
-    
-    <h4>Step 7: Saving Everything</h4>
+    <p>Finally, I save three important files. First is the trained model itself (saved as a <code>.h5</code> file), which contains all those learned patterns and weights. Second is the label encoder (saved as a <code>.pkl</code> file), which remembers how to convert between numbers and letters since, again, the computer works with numbers internally, but we want to see actual letters. Third is the scaler (also a <code>.pkl</code> file), which remembers exactly how we standardized the data during training. We need this because when we use the model later for real-time detection, we have to preprocess new hand positions in exactly the same way, otherwise the model won't work correctly. All three files are saved in the models directory so we can load them later for real-time detection.</p>
     
     <pre><code>model.save('models/sign_language_model.h5')
 
@@ -580,15 +439,12 @@ with open('models/label_encoder.pkl', 'wb') as f:
 
 with open('models/scaler.pkl', 'wb') as f:
     pickle.dump(scaler, f)</code></pre>
+
+    <p>And now, let's get it run!</p>
     
-    <p><strong>Why save three files?</strong></p>
-    <ol>
-        <li><strong>Model</strong> (.h5): The trained neural network</li>
-        <li><strong>Label encoder</strong> (.pkl): Remembers which number corresponds to which letter</li>
-        <li><strong>Scaler</strong> (.pkl): Remembers how to standardize new data the same way</li>
-    </ol>
-    
-    <p>When we use the model later for real-time detection, we need all three!</p>
+    <pre><code>if __name__="__main__":
+    train()</code></pre>
+
 </div>
 
 <div class="section">
