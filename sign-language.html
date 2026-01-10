@@ -169,7 +169,7 @@
     <p>Hence, this is my research writing, but also my journal of how I'm on my way to creating a site and trying to make a small impact in my own way. There's still a long way to go, but here we are!</p>
 
     <div class="important">
-        I know sign language recognition systems exist already, but this is my first real independent project where I'm learning by building everything from scratch—debugging and all. More importantly, there's no system like this for Vietnamese Sign Language yet, and I want to understand the technology deeply enough to eventually build something that can actually help my mom and the Vietnamese deaf community.
+        I know sign language recognition systems exist already thanks to amazing researchers who've paved the way, but this is my first real independent project where I'm learning by building everything from scratch, debugging and all. More importantly, there's no system like this for Vietnamese Sign Language yet, and I want to understand the technology deeply enough to eventually build something that can actually help my mom and the Vietnamese deaf community.
     </div>
 
     <div style="display: flex; gap: 20px; margin-top: 25px;">
@@ -207,7 +207,7 @@
 </div>
 
 <div class="section">
-    <h2>The big picture of how does this work</h2>
+    <h2>The big picture of how this would work</h2>
 
     <p>Before going deeper into how the coding works for me, I would love to walk you through quickly how the general system would look like to me. There are three main steps that I will carry out throughout the whole time. First, I would use my webcam to record my hand gestures for each letter through a data collection script called <code>collect_data.py</code>. The computer would "see" my hand and record the position of each finger. Then, the computer would "learn" to recognize patterns of my hand gestures for each letter through <code>train_model.py</code>. It's like teaching a child where this hand shape means 'A', this one means 'B', and so on. Finally, through <code>real_time_detection.py</code>, the computer can watch my hand through the webcam and tell me what letter I'm signing.
     
@@ -217,14 +217,9 @@
 </div>
 
 <div class="section">
-    <h2>Part 1: Collecting Data (collect_data.py)</h2>
+    <h2>Part 1: Collecting data <code>collect_data.py</code></h2>
     
-    <h3>What Does This File Do?</h3>
-    <p>This is where I collect training data. I show the webcam my hand making different sign language letters, and the computer records the hand positions. It's like taking photos, but instead of saving images, we save the coordinates of where each finger is.</p>
-    
-    <h3>Breaking It Down Step-by-Step</h3>
-    
-    <h4>Step 1: Setting Up the Tools</h4>
+    <p>Let me start by walking you through how I built the data collection tool. You can think of this as taking photos, but instead of saving images, we save the coordinates of where each finger is. To do this, I needed three main tools in Python. The first one is cv2 (OpenCV), which lets Python work with my webcam and process images. The second is mediapipe, which is Google's tool that can actually "see" hands and track finger positions in real-time. And finally, numpy helps me organize all those finger coordinates into arrays that the computer can work with efficiently.</p>
     
     <pre><code>import cv2
 import mediapipe as mp
