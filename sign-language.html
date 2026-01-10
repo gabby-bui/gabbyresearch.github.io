@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Sign Language Recognition - Gabby Bui</title>
+    <title>Real-Time Hand Sign Language Recognition - Gabby Bui</title>
     <style>
         * {
             margin: 0;
@@ -13,26 +13,118 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 900px;
+            line-height: 1.7;
+            color: #2d3748;
+            background: linear-gradient(135deg, #faf8f5 0%, #f0ebe6 100%);
+            background-attachment: fixed;
+        }
+        
+        .page-wrapper {
+            display: flex;
+            max-width: 1400px;
             margin: 0 auto;
+        }
+
+        .toc-sidebar {
+            width: 250px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
+            margin: 20px;
+            flex-shrink: 0;
+            border-left: 3px solid #5B9BD5;
+        }
+
+        .toc-sidebar h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 1.1em;
+            color: #1a202c;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .toc-sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .toc-sidebar li {
+            margin-bottom: 8px;
+        }
+
+        .toc-sidebar a {
+            color: #5a5a5a;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9em;
+            border-left: 2px solid transparent;
+        }
+
+        .toc-sidebar a:hover {
+            background-color: #faf5f0;
+            color: #0051BA;
+            transform: translateX(3px);
+        }
+
+        .toc-sidebar a.active {
+            background-color: #faf5f0;
+            color: #0051BA;
+            border-left: 2px solid #0051BA;
+            font-weight: 500;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 900px;
             padding: 20px;
-            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 1024px) {
+            .toc-sidebar {
+                display: none;
+            }
+        }
+
+        .breadcrumb {
+            margin-bottom: 25px;
+        }
+
+        .breadcrumb a {
+            color: #718096;
+            text-decoration: none;
+            font-size: 0.95em;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: #0051BA;
         }
         
         h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 2em;
+            color: #1a202c;
+            margin-bottom: 12px;
+            font-size: 2.3em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
         
         h2 {
-            color: #34495e;
-            margin-top: 40px;
-            margin-bottom: 15px;
-            border-bottom: 2px solid #3498db;
-            padding-bottom: 10px;
+            color: #2d3748;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #5B9BD5;
+            padding-bottom: 12px;
+            scroll-margin-top: 20px;
+            font-weight: 600;
         }
         
         h3 {
@@ -48,24 +140,26 @@
         }
         
         p {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
+            font-size: 1.02em;
         }
         
         code {
-            background-color: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
+            background-color: #f7f3ed;
+            padding: 3px 7px;
+            border-radius: 4px;
             font-family: 'Courier New', monospace;
             font-size: 0.9em;
         }
         
         pre {
-            background-color: #2d2d2d;
+            background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
             color: #f8f8f2;
-            padding: 15px;
-            border-radius: 5px;
+            padding: 20px;
+            border-radius: 8px;
             overflow-x: auto;
-            margin: 15px 0;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         
         pre code {
@@ -76,60 +170,63 @@
         
         ul, ol {
             margin-left: 30px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         
         li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         
         .motivation {
-            background-color: #fff;
-            padding: 20px;
-            border-left: 4px solid #3498db;
-            margin: 20px 0;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-left: 4px solid #5B9BD5;
+            margin: 25px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
         .section {
-            background-color: #fff;
-            padding: 25px;
-            margin: 20px 0;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            margin: 25px 0;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
         .analogy {
-            background-color: #fff3cd;
-            padding: 15px;
-            border-left: 4px solid #ffc107;
-            margin: 15px 0;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #fff9e6 0%, #fff5db 100%);
+            padding: 18px;
+            border-left: 4px solid #f0c97d;
+            margin: 20px 0;
+            border-radius: 6px;
         }
         
         .important {
-            background-color: #d4edda;
-            padding: 15px;
-            border-left: 4px solid #28a745;
-            margin: 15px 0;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #d7f0d9 100%);
+            padding: 18px;
+            border-left: 4px solid #81c784;
+            margin: 20px 0;
+            border-radius: 6px;
         }
         
         .technical {
-            background-color: #e7f3ff;
-            padding: 15px;
-            border-left: 4px solid #2196F3;
-            margin: 15px 0;
-            border-radius: 5px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #d1e8f7 100%);
+            padding: 18px;
+            border-left: 4px solid #64b5f6;
+            margin: 20px 0;
+            border-radius: 6px;
         }
         
         strong {
-            color: #2c3e50;
+            color: #1a202c;
+            font-weight: 600;
         }
         
         a {
-            color: #3498db;
+            color: #0051BA;
             text-decoration: none;
+            transition: color 0.2s;
         }
         
         a:hover {
@@ -138,12 +235,47 @@
         
         hr {
             border: none;
-            border-top: 1px solid #ddd;
-            margin: 30px 0;
+            border-top: 1px solid #e2d5c8;
+            margin: 35px 0;
+        }
+
+        figure {
+            margin: 20px 0;
+        }
+
+        figcaption {
+            font-style: italic;
+            color: #718096;
+            margin-top: 8px;
+        }
+
+        img {
+            transition: transform 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
 <body>
+
+<div class="page-wrapper">
+
+    <aside class="toc-sidebar">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#motivation" data-section="motivation">Why This Project?</a></li>
+            <li><a href="#big-picture" data-section="big-picture">The Big Picture</a></li>
+            <li><a href="#part1" data-section="part1">Part 1: Data Collection</a></li>
+            <li><a href="#part2" data-section="part2">Part 2: Training Model</a></li>
+            <li><a href="#part3" data-section="part3">Part 3: Detection</a></li>
+            <li><a href="#seeing-it-work" data-section="seeing-it-work">Seeing It Work!</a></li>
+            <li><a href="#acknowledgement" data-section="acknowledgement">Acknowledgement</a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
 
     <div class="container">
         <nav class="breadcrumb">
@@ -156,7 +288,7 @@
 <hr>
 
 <div class="motivation">
-    <h2>Why is this project deeply meaningful to me?</h2>
+    <h2 id="motivation">Why is this project deeply meaningful to me?</h2>
     
     <p>I was born and raised by my lovely single mom, who is deaf. We've been using Vietnamese Sign Language (VSL) to communicate with each other. However, since leaving Vietnam for high school in China, I realized how lonely she was as there's barely anyone else she could communicate with, as people don't really know VSL.</p>
     
@@ -207,7 +339,7 @@
 </div>
 
 <div class="section">
-    <h2>The big picture of how this would work</h2>
+    <h2 id="big-picture">The big picture of how this would work</h2>
 
     <p>Before going deeper into how the coding works for me, I would love to walk you through quickly how the general system would look like to me. There are three main steps that I will carry out throughout the whole time. First, I would use my webcam to record my hand gestures for each letter through a data collection script called <code>collect_data.py</code>. The computer would "see" my hand and record the position of each finger. Then, the computer would "learn" to recognize patterns of my hand gestures for each letter through <code>train_model.py</code>. It's like teaching a child where this hand shape means 'A', this one means 'B', and so on. Finally, through <code>real_time_detection.py</code>, the computer can watch my hand through the webcam and tell me what letter I'm signing.
     
@@ -217,7 +349,7 @@
 </div>
 
 <div class="section">
-    <h2>Part 1: Collecting data <code>collect_data.py</code></h2>
+    <h2 id="part1">Part 1: Collecting data <code>collect_data.py</code></h2>
     
     <p>Let me start by walking you through how I built the data collection tool. You can think of this as taking photos, but instead of saving images, we save the coordinates of where each finger is. To do this, I needed three main powerful tools in Python. The first one is <code>cv2</code> (OpenCV), which lets Python work with my webcam and process images. The second is <code>mediapipe</code>, which is Google's tool that can actually "see" hands and track finger positions in real-time. And finally, <code>numpy</code> would help me organize all those finger coordinates into arrays that the computer can work with efficiently.</p>
     
@@ -324,7 +456,7 @@ return samples</code></pre>
 </div>
 
 <div class="section">
-    <h2>Part 2: Training the Model <code>train_model.py</code></h2>
+    <h2 id="part2">Part 2: Training the model <code>train_model.py</code></h2>
     
     <p>Now that I have all this data collected, the next step is to teach the computer to recognize patterns. This process is called "training a machine learning model," and you can think of it as the computer studying for a test. The computer looks at all our examples and learns what makes an 'A' different from a 'B', what makes a 'C' different from a 'D', and so on.</p>
 
@@ -448,7 +580,7 @@ with open('models/scaler.pkl', 'wb') as f:
 </div>
 
 <div class="section">
-    <h2>Part 3: Real-Time Detection <code>real_time_detection.py</code></h2>
+    <h2 id="part3">Part 3: Real-time hand sign detection <code>real_time_detection.py</code></h2>
     
     <p>This is the exciting part where everything comes together! Now that I have a trained model, I can use my webcam to recognize sign language in real-time. The computer will watch my hand and instantly tell me what letter I'm signing. This is honestly the coolest part because it's when I can actually see the system working.</p>
 
@@ -560,9 +692,11 @@ return None, 0, None</code></pre>
     <pre><code>if __name__ == "__main__":
     detector = SignLanguageDetector()
     detector.run()</code></pre>
+
+</div>
     
 <div class="section">
-    <h2>Seeing it work!</h2>
+    <h2 id="seeing-it-work">Seeing it work!</h2>
     
     <p>After all that data collection, training, and coding, this is the moment I was waiting for. Actually seeing the system recognize my signs in real-time! The detection window shows the webcam feed with those 21 hand landmarks tracked as dots and lines, and when the model is confident enough (when it passes the 70% threshold that I set), the predicted letter appears in the top-left corner along with the confidence percentage.</p>
     
@@ -590,17 +724,19 @@ return None, 0, None</code></pre>
             </figcaption>
         </figure>
     </div>
+
+    <p>Of course, it's not always 100% confident. Sometimes when my hand is in an ambiguous position or transitioning between letters, the confidence drops to 80% or 90%. That's actually a good thing, as it means the model knows when it's uncertain rather than confidently predicting the wrong letter. And remember that prediction buffer we talked about? It really helps smooth out those transitions. Without it, you'd see the predictions flickering rapidly between letters, but with the smoothing, the display is much more stable and readable.</p>
     
 </div>
 
 <div class="section">
-    <h2>Acknowledgement and reference</h2>
+    <h2 id="acknowledgement">Acknowledgement and reference</h2>
 
     <p>This project wouldn't exist without the incredible support and guidance I've received from my professors at Macalester College, especially Professor Taryn Flock, my academic advisor, who has been supporting me from the very early stages of this project and constantly encouraging me to pursue what I'm passionate about. Professor Susan Fox and Lauren Milne have been absolute my lifesavers, who have frequently checked in with me and helped me navigate all the technical challenges I've encountered along the way. Their patience in answering my endless questions has been invaluable. I genuinely don't think I would have made it this far without their time and support.</p>
 
     <p>I'd also like to acknowledge the incredible educational resources that taught me the foundations of machine learning and computer vision. Andrew Ng's Machine Learning Specialization on Coursera was where I first learned about neural networks, gradient descent, and all the fundamental concepts that power this project. His ability to explain complex topics in an intuitive way made machine learning feel accessible to me as a beginner. I literally watched his lectures over and over again until the concepts finally clicked.</p>
 
-    <p>On the technical side, this project stands on the shoulders of some amazing open-source tools and libraries. The MediaPipe hand tracking system developed by Google is what makes the real-time hand detection possible. The fact that it can track 21 hand landmarks at 30+ frames per second on a regular laptop is genuinely incredible. The research paper "MediaPipe Hands: On-device Real-time Hand Tracking" by Zhang et al. provides all the technical details about how it works. I'm using OpenCV for all the webcam and image processing operations. It's been the standard computer vision library for years and for good reason. For the machine learning side, I'm using TensorFlow and Keras, which provide high-level APIs that make building and training neural networks much more approachable than writing everything from scratch. And NumPy and Scikit-learn handle all the numerical computing and data preprocessing.)</p>
+    <p>On the technical side, this project stands on the shoulders of some amazing open-source tools and libraries. The MediaPipe hand tracking system developed by Google is what makes the real-time hand detection possible. The fact that it can track 21 hand landmarks at 30+ frames per second on a regular laptop is genuinely incredible. The research paper "MediaPipe Hands: On-device Real-time Hand Tracking" by Zhang et al. provides all the technical details about how it works. I'm using OpenCV for all the webcam and image processing operations. It's been the standard computer vision library for years and for good reason. For the machine learning side, I'm using TensorFlow and Keras, which provide high-level APIs that make building and training neural networks much more approachable than writing everything from scratch. And NumPy and Scikit-learn handle all the numerical computing and data preprocessing.</p>
 
     <p>Here are the key technical references that I consulted throughout this project:</p>
 
@@ -621,6 +757,46 @@ return None, 0, None</code></pre>
 <p style="text-align: center; color: #7f8c8d; margin-top: 40px;">
     <em>Built and written with ❤️ by Gabby Bui | Macalester College Class of 2029</em>
 </p>
+
+    </div>
+</div>
+
+<script>
+// Scroll spy for table of contents
+document.addEventListener('DOMContentLoaded', function() {
+    const sections = document.querySelectorAll('h2[id]');
+    const navLinks = document.querySelectorAll('.toc-sidebar a[data-section]');
+    
+    const observerOptions = {
+        root: null,
+        rootMargin: '-20% 0px -35% 0px',
+        threshold: 0
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const id = entry.target.getAttribute('id');
+                
+                // Remove active class from all links
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+                
+                // Add active class to current link
+                const activeLink = document.querySelector(`.toc-sidebar a[data-section="${id}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+        });
+    }, observerOptions);
+    
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+});
+</script>
 
 </body>
 </html>
