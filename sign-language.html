@@ -562,114 +562,46 @@ return None, 0, None</code></pre>
     detector.run()</code></pre>
     
 <div class="section">
-    <h2>Summary: The Complete System</h2>
+    <h2>Seeing it work!</h2>
     
-    <h3>The Journey:</h3>
+    <p>After all that data collection, training, and coding, this is the moment I was waiting for. Actually seeing the system recognize my signs in real-time! The detection window shows the webcam feed with those 21 hand landmarks tracked as dots and lines, and when the model is confident enough (when it passes the 70% threshold that I set), the predicted letter appears in the top-left corner along with the confidence percentage.</p>
     
-    <ol>
-        <li><strong>Data Collection</strong> (collect_data.py)
-            <ul>
-                <li>I show my hand making different letters</li>
-                <li>Computer records hand positions</li>
-                <li>Save 150 examples per letter</li>
-            </ul>
-        </li>
-        
-        <li><strong>Training</strong> (train_model.py)
-            <ul>
-                <li>Computer learns patterns from examples</li>
-                <li>"This hand shape = A, this shape = B..."</li>
-                <li>Save the trained model</li>
-            </ul>
-        </li>
-        
-        <li><strong>Real-Time Detection</strong> (real_time_detection.py)
-            <ul>
-                <li>Computer watches webcam</li>
-                <li>Recognizes hand shapes</li>
-                <li>Shows predicted letter instantly!</li>
-            </ul>
-        </li>
-    </ol>
-    
-    <h3>Why This Matters to Me</h3>
-    
-    <p>Every time I test this system and see it correctly recognize a sign, I think about my mom. This isn't just a coding project—it's a step toward making communication more accessible. Even though I'm still learning and the system isn't perfect yet, I'm building something that could help people like my mom feel less isolated.</p>
-    
-    <p>There's still so much to improve:</p>
-    <ul>
-        <li>Adding more signs (not just letters)</li>
-        <li>Making it work for Vietnamese Sign Language specifically</li>
-        <li>Building the full "Duolingo" experience with lessons and practice</li>
-    </ul>
-    
-    <p>But for now, I'm proud that I've taken these first steps. From knowing nothing about computer vision to building a working sign language recognizer—it's been a challenging but meaningful journey.</p>
-    
-    <p>And that's exactly why I'm documenting this. Not because I have all the answers, but because I'm learning, and I want to share that process with others who might be on a similar path.</p>
+    <p>Here are some examples of the system working. When I sign the letter M, the model detects it with 100% confidence. The landmarks are tracking all my finger positions perfectly, and you can see how the system understands the shape my hand is making. Same thing happens with G. The model immediately recognizes the hand position and displays "G (100.0%)" at the top. And when I sign A, again, 100% confidence. It's honestly such a surreal feeling to see something I built from scratch actually working!</p>
+
 </div>
 
 <div class="section">
-    <h2>Technical Details</h2>
+    <h2>The main idea</h2>
     
-    <h3>Technologies Used:</h3>
-    <ul>
-        <li><strong>Python</strong>: Programming language</li>
-        <li><strong>OpenCV (cv2)</strong>: Webcam and image processing</li>
-        <li><strong>MediaPipe</strong>: Hand detection and tracking</li>
-        <li><strong>TensorFlow/Keras</strong>: Machine learning framework</li>
-        <li><strong>NumPy</strong>: Numerical computing</li>
-        <li><strong>Scikit-learn</strong>: Data preprocessing and evaluation</li>
-    </ul>
+    <p>This is a computer vision system that uses machine learning to recognize American Sign Language letters in real-time. The entire pipeline can be broken down into three essential components that work together seamlessly.</p>
+
+    <p>First, we have the data collection phase. Using MediaPipe's hand tracking technology, we capture the 3D positions of 21 key points on the hand. These aren't just random points. They're strategically placed at joints and fingertips to capture the complete shape and orientation of the hand. For each letter, we collect 150 examples to account for natural variations in how people sign. This diversity in the training data is what allows the model to generalize well to new hand positions it hasn't seen before.</p>
+
+    <p>Second, we have the training phase, which is where machine learning comes in. We use a neural network with multiple layers that learn hierarchical representations of the hand shapes. The first layer might learn simple patterns like "finger bent" or "finger extended." The second layer combines these into more complex patterns like "three fingers bent in a specific configuration." The third layer understands even more nuanced patterns that distinguish between similar-looking letters. By training on thousands of examples, the network learns to map hand shapes to letters with high accuracy. The normalization and scaling steps ensure that the model focuses on shape rather than size or position, making it work for different people and different distances from the camera.</p>
+
+    <p>Third, we have the real-time detection phase, which is where everything comes to life. The system continuously captures frames from the webcam, detects the hand landmarks, preprocesses them in exactly the same way as during training, and feeds them through the trained neural network. The model outputs a probability distribution over all possible letters, and we display the most likely one if the confidence is high enough. The prediction buffer smooths out temporal inconsistencies, giving us stable, readable predictions. All of this happens fast enough that there's no noticeable lag. You can sign letters and see the predictions update in real-time.</p>
+
+    <p>What makes this work is the combination of computer vision (MediaPipe for hand tracking), machine learning (neural networks for pattern recognition), and careful engineering (normalization, smoothing, thresholding). None of these components would work well in isolation. It's the careful integration of all three that creates a system that actually feels magical to use. You sign a letter, and the computer instantly knows what you're signing.</p>
     
-    <h3>Model Architecture:</h3>
-    <ul>
-        <li><strong>Input</strong>: 63 features (21 hand landmarks × 3 coordinates)</li>
-        <li><strong>Layer 1</strong>: 128 neurons (Dense + ReLU + BatchNorm + Dropout)</li>
-        <li><strong>Layer 2</strong>: 64 neurons (Dense + ReLU + BatchNorm + Dropout)</li>
-        <li><strong>Layer 3</strong>: 32 neurons (Dense + ReLU + Dropout)</li>
-        <li><strong>Output</strong>: 24 neurons (one per letter, softmax activation)</li>
-    </ul>
-    
-    <h3>Dataset:</h3>
-    <ul>
-        <li>24 ASL letters (excluding J and Z, which require motion)</li>
-        <li>150 samples per letter</li>
-        <li>Total: 3,600 training examples</li>
-    </ul>
-    
-    <h3>Performance:</h3>
-    <ul>
-        <li>Training accuracy: ~95%+</li>
-        <li>Real-time detection: ~90%+ accuracy</li>
-        <li>Processing speed: 30+ FPS (frames per second)</li>
-    </ul>
 </div>
 
 <div class="section">
-    <h2>Next Steps</h2>
+    <h2>Challenges that I'm currently facing and how I'm planning to solve them?</h2>
     
-    <h3>Short-term goals:</h3>
-    <ol>
-        <li>Partner with Northern Voices to get more diverse training data</li>
-        <li>Add more signs beyond just letters</li>
-        <li>Improve accuracy for challenging letters</li>
-    </ol>
-    
-    <h3>Long-term vision:</h3>
-    <ol>
-        <li>Build the full interactive learning platform</li>
-        <li>Add Vietnamese Sign Language support</li>
-        <li>Create lessons and practice modes</li>
-        <li>Make it accessible to everyone</li>
-    </ol>
-    
-    <p><strong>This is just the beginning.</strong> Every line of code brings me closer to building something that could make a real difference for my mom and people like her.</p>
+    <p>A</p>
 </div>
 
+<div class="section">
+    <h2>Acknowledgement and reference</h2>
+
+    <p></p>
+
+</div>
+    
 <hr>
 
 <p style="text-align: center; color: #7f8c8d; margin-top: 40px;">
-    <em>Built with ❤️ by Gabby Bui | Macalester College '29</em>
+    <em>Built with ❤️ by Gabby Bui | Macalester College Class of 2029</em>
 </p>
 
 </body>
