@@ -45,6 +45,7 @@ header h1 {
 .intro {
     margin-bottom: 50px;
     padding: 20px 0;
+    line-height: 1.6;
 }
 
 .intro p {
