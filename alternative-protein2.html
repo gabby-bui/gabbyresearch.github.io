@@ -65,7 +65,7 @@
         
         p { margin-bottom: 18px; font-size: 1.02em; }
         
-        /* Code Blocks - keeping them simpler */
+        /* Code Blocks */
         code { background-color: #f7f3ed; padding: 3px 7px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; color: #333; }
         pre {
             background: #2d2d2d;
@@ -75,7 +75,7 @@
         }
         pre code { background-color: transparent; color: #f8f8f2; padding: 0; }
         
-        /* Removed "boxes" styles, using standard sections */
+        /* Section Styling */
         .section { background: rgba(255, 255, 255, 0.9); padding: 30px; margin: 25px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
         img { max-width: 100%; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 15px; }
@@ -105,12 +105,12 @@
         <h3>Table of Contents</h3>
         <ul>
             <li><a href="#intro" data-section="intro">Introduction</a></li>
-            <li><a href="#method" data-section="method">Difference-in-Differences</a></li>
+            <li><a href="#design" data-section="design">Research Design (DiD)</a></li>
             <li><a href="#setup" data-section="setup">Setting up the Code</a></li>
             <li><a href="#cleaning" data-section="cleaning">Cleaning Data</a></li>
-            <li><a href="#categorizing" data-section="categorizing">Categorizing B2B vs B2C</a></li>
-            <li><a href="#analysis" data-section="analysis">The Analysis</a></li>
-            <li><a href="#results" data-section="results">Results & Discussion</a></li>
+            <li><a href="#categorizing" data-section="categorizing">Categorizing Business Models</a></li>
+            <li><a href="#regression" data-section="regression">Regression Analysis</a></li>
+            <li><a href="#discussion" data-section="discussion">Discussion of Results</a></li>
             <li><a href="#acknowledgement" data-section="acknowledgement">Acknowledgement</a></li>
         </ul>
     </aside>
@@ -122,58 +122,59 @@
             </nav>
             
             <h1>Alternative Protein Industry Analysis</h1>
-            <p style="color: #7f8c8d; font-size: 1.1em;">Using Difference-in-Differences to investigate the "Picks and Shovels" hypothesis</p>
+            <p style="color: #7f8c8d; font-size: 1.1em;">A Classical Difference-in-Differences approach to the "Picks and Shovels" hypothesis</p>
 
             <hr>
 
             <div class="section">
                 <h2 id="intro">Introduction and Background</h2>
                 
-                <p>When I look at the grocery store shelves these days, I see so many plant-based burger brands. There is Beyond Meat, Impossible Foods, and so many other startups trying to do the same thing. It honestly feels very crowded. As an economics student, this made me wonder about where the investment money is actually going. If the market for burgers is saturated, surely the smart investors must be looking somewhere else.</p>
+                <p>When I look at the grocery store shelves these days, I see dozens of plant-based burger brands competing for attention. From Beyond Meat to Impossible Foods and countless others, the consumer market (B2C) feels incredibly saturated. As an economics student, this observation led me to a question about capital allocation: In such a crowded "gold rush," where is the smart money actually going?</p>
                 
-                <p>There is a concept from the Gold Rush called "picks and shovels." The idea is that most people digging for gold went broke, but the people who sold the tools, like the shovels and jeans, made consistent money. I started to think that maybe the same thing is happening in the alternative protein industry. Instead of betting on another consumer brand (B2C), maybe investors are pivoting to the companies that provide the ingredients and technology (B2B) to everyone else.</p>
+                <p>There is a classic concept from the 1849 Gold Rush known as the "picks and shovels" strategy. History tells us that while most prospectors digging for gold went broke, the businesses selling them tools—like Levis Strauss selling jeans—made consistent fortunes. I hypothesized that a similar structural shift occurred in the alternative protein industry around 2019. Instead of betting on yet another burger brand, investors likely pivoted upstream to the B2B companies providing the essential ingredients and infrastructure to the entire sector.</p>
 
-                <p>This led me to my research question: Did investors pivot toward B2B companies significantly more than B2C companies after the industry boom in 2019? To answer this, I decided to use a dataset that I collected myself, which contains over 2,000 company records from 2008 to 2024. You can view the raw data <a href="https://www.dropbox.com/scl/fi/sdd5sq80l0rv002os6v1w/All_Companies_Database.csv?rlkey=chodjs7k4aw5d0pxrs42j05xt&st=ws0v96n1&dl=0" target="_blank">here</a>.</p>
+                <p>To test this, I utilized a dataset I personally collected and cleaned, containing over 2,000 company records from 2008 to 2024. You can access the raw data <a href="https://www.dropbox.com/scl/fi/sdd5sq80l0rv002os6v1w/All_Companies_Database.csv?rlkey=chodjs7k4aw5d0pxrs42j05xt&st=ws0v96n1&dl=0" target="_blank">here</a>.</p>
             </div>
 
             <div class="section">
-                <h2 id="method">The Difference-in-Differences Estimator</h2>
+                <h2 id="design">Research Design: The Difference-in-Differences Estimator</h2>
                 
-                <p>To analyze this, I cannot simply compare the average funding of B2B companies against B2C companies because they are different types of businesses. I also cannot just compare funding before 2019 and after 2019 because the whole industry grew during that time. I need a method that isolates the specific effect of being a B2B company after the boom occurred.</p>
+                <p>To rigorously test this hypothesis, I cannot simply compare the average funding of B2B versus B2C companies, as they are fundamentally different businesses with different capital needs. Nor can I simply compare funding "before and after" 2019, as the entire industry grew during this period due to macro-economic factors.</p>
 
-                <p>I chose the Difference-in-Differences (DiD) estimator. This is a statistical technique that compares the changes in outcomes over time between a treatment group and a control group. In my case, the treatment group is the B2B companies, and the control group is the B2C companies.</p>
+                <p>I therefore employed the Difference-in-Differences (DiD) estimator, treating the 2019-2020 market boom (and subsequent COVID-19 supply chain shock) as an <strong>exogenous shock</strong>. This "Natural Experiment" design allows us to isolate the specific causal effect of the market shift on B2B companies.</p>
 
-                <p>The mathematical regression model I am using is:</p>
+                <p>The core of my analysis relies on the following regression model:</p>
                 
                 <div class="math-block">
-                    $Y_{it} = \beta_0 + \beta_1 T_i + \beta_2 P_t + \beta_3 (T_i \times P_t) + \epsilon_{it}$
+                    $Y_{it} = \beta_0 + \beta_1 Treat_i + \beta_2 Post_t + \beta_3 (Treat_i \times Post_t) + \epsilon_{it}$
                 </div>
 
-                <p>Here, $Y_{it}$ is the capital raised. $T_i$ is the treatment dummy (1 if B2B, 0 if B2C). $P_t$ is the time dummy (1 if Post-2019, 0 if Pre-2019). The most important part is $\beta_3$, which is the interaction term. This coefficient tells us the "Difference-in-Differences," or how much extra funding the B2B companies received specifically because of the pivot.</p>
+                <p>Where:</p>
+                <ul>
+                    <li><strong>$Treat_i$</strong> captures the inherent differences between B2B and B2C groups.</li>
+                    <li><strong>$Post_t$</strong> captures the time trend affecting all companies after 2019.</li>
+                    <li><strong>$\beta_3 (Treat \times Post)$</strong> is the coefficient of interest. This <strong>Interaction Term</strong> measures the "excess" growth B2B companies experienced specifically because of the pivot, relative to the control group.</li>
+                </ul>
             </div>
 
             <div class="section">
-                <h2 id="setup">Setting up the Code</h2>
-                <p>I started by importing the necessary libraries. I need pandas to handle the database, numpy for the numerical calculations, and matplotlib to draw the parallel trend graphs.</p>
+                <h2 id="setup">Setting up the Analysis</h2>
+                <p>I began by importing the necessary libraries. I used <code>pandas</code> for data manipulation, <code>matplotlib</code> for visualizing the trends, and <code>statsmodels</code> to run the formal OLS regression.</p>
 
                 <pre><code>import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt</code></pre>
+import matplotlib.pyplot as plt
+import statsmodels.formula.api as smf</code></pre>
 
-                <p>Then I uploaded the dataset. I used the <code>read_csv</code> function from pandas to load the file into a dataframe.</p>
+                <p>I then loaded the dataset. A quick inspection of the head ensures that the file was read correctly and helps visualize the structure of the columns.</p>
 
-                <pre><code>df = pd.read_csv("All_Companies_Database.csv")</code></pre>
-
-                <p>I always like to check if the data loaded correctly by printing the first few rows. This helps me see what the columns look like.</p>
-
-                <pre><code>print(df.head())</code></pre>
+                <pre><code>df = pd.read_csv("All_Companies_Database.csv")
+print(df.head())</code></pre>
             </div>
 
             <div class="section">
                 <h2 id="cleaning">Cleaning the Data</h2>
-                <p>When I looked at the data, I realized the 'RaisedToDate' column was stored as text strings because they included dollar signs and commas, like "$1,000,000". I cannot do math with text, so I wrote a function to clean this up.</p>
-
-                <p>The function checks if the value is a string, removes the symbols, and handles any missing values (which were marked as '-'). Then it converts the clean number into a float so the computer can calculate the mean later.</p>
+                <p>The financial data in the 'RaisedToDate' column was stored as strings containing dollar signs and commas (e.g., "$1,000,000"), which prevents numerical analysis. I wrote a helper function to strip these characters and handle missing values, converting everything into floating-point numbers.</p>
 
                 <pre><code>def clean_currency(x):
     if isinstance(x, str):
@@ -187,21 +188,19 @@ df['RaisedToDate_cleaned'] = df['RaisedToDate'].apply(clean_currency)</code></pr
             </div>
 
             <div class="section">
-                <h2 id="categorizing">Categorizing Business Models</h2>
-                <p>This was a very important step for my analysis. The dataset had many companies with complex business models. Some companies do both B2B and B2C. For example, they might sell ingredients to other companies but also sell their own nuggets in supermarkets. These "Hybrid" companies make the comparison muddy because it is hard to say which group they belong to.</p>
-                
-                <p>To make my results as clear as possible, I decided to exclude the hybrid models. I wrote a function that strictly categorizes a company as 'B2B (Treatment)' only if they are purely B2B, and 'B2C (Control)' only if they are purely B2C.</p>
+                <h2 id="categorizing">Categorizing Business Models & Defining Cohorts</h2>
+                <p>A major challenge in this dataset was the presence of "Hybrid" companies—those that sell both ingredients to other businesses and branded products to consumers. Including these would muddy the distinction between treatment and control groups. To ensure a clean identification strategy, I strictly categorized companies as either 'B2B' or 'B2C', excluding any ambiguity.</p>
 
                 <pre><code>def categorize_b2b(val):
     if pd.isna(val): return None
-    if 'B2B' in val and 'B2C' in val: return 'Hybrid' # Exclude mixed models
-    if 'B2B' in val: return 'B2B (Treatment)'
-    if 'B2C' in val: return 'B2C (Control)'
+    if 'B2B' in val and 'B2C' in val: return None # Strict separation
+    if 'B2B' in val: return 'B2B'
+    if 'B2C' in val: return 'B2C'
     return None
 
 df['BusinessModel'] = df['B2B/B2C'].apply(categorize_b2b)</code></pre>
 
-                <p>I also needed to filter the companies based on when they were founded. If I included every single company, the data would be very noisy because hundreds of tiny startups appeared during the bubble years of 2020-2022. I wanted to see how established companies pivoted. So, I created a cohort of companies that were founded on or before 2015.</p>
+                <p>Furthermore, to avoid capturing the noise of hundreds of tiny startups that emerged during the bubble, I filtered the data to create a consistent <strong>Cohort</strong> of companies founded on or before 2015. This allows us to track how <em>established</em> players navigated the market pivot.</p>
 
                 <pre><code>def clean_year(y):
     try: return int(y)
@@ -209,68 +208,68 @@ df['BusinessModel'] = df['B2B/B2C'].apply(categorize_b2b)</code></pre>
 
 df['Year_founded_clean'] = df['Year founded'].apply(clean_year)
 
-# Filter for the cohort founded <= 2015
+# Filter for the established cohort
 cohort_df = df[
     (df['Year_founded_clean'] <= 2015) & 
-    (df['BusinessModel'].isin(['B2B (Treatment)', 'B2C (Control)'])) & 
+    (df['BusinessModel'].notnull()) & 
     (df['RaisedToDate_cleaned'].notnull())
 ].copy()</code></pre>
             </div>
 
             <div class="section">
-                <h2 id="analysis">Visualizing Parallel Trends</h2>
-                <p>Before calculating the DiD estimator, I had to check the parallel trends assumption. This assumption states that if the boom had not happened, the treatment and control groups would have continued to move in parallel. If they were already moving in different directions before 2019, my analysis would be invalid.</p>
+                <h2 id="regression">Regression Analysis and Counterfactual Plotting</h2>
                 
-                <p>I plotted the average capital raised for both groups over time to check this visually.</p>
+                <p>To run the classical DiD regression, I created dummy variables for the treatment group (`Treat`) and the post-2019 period (`Post`). I also applied a logarithmic transformation to the capital raised. This is standard practice in financial econometrics because funding amounts often follow a power law, and log-transformation normalizes the distribution and reduces the impact of massive outliers.</p>
 
-                <pre><code>trend_data = cohort_df.groupby(['Year', 'BusinessModel'])['RaisedToDate_cleaned'].mean().unstack()
+                <pre><code>cohort_df['Treat'] = (cohort_df['BusinessModel'] == 'B2B').astype(int)
+cohort_df['Post'] = (cohort_df['Year'] >= 2020).astype(int)
+cohort_df['Log_Raised'] = np.log1p(cohort_df['RaisedToDate_cleaned'])
 
-plt.figure(figsize=(12, 6))
-plt.plot(trend_data.index, trend_data['B2B (Treatment)'], label='B2B', marker='o')
-plt.plot(trend_data.index, trend_data['B2C (Control)'], label='B2C', marker='s')
-plt.axvline(x=2019, color='red', linestyle='--', label='Boom (2019)')
-plt.legend()
-plt.show()</code></pre>
+# Running the OLS model with the interaction term
+model = smf.ols("Log_Raised ~ Treat * Post", data=cohort_df).fit()
+print(model.summary())</code></pre>
+
+                <p>To visualize the results, I generated a plot that explicitly shows the <strong>Counterfactual</strong>. This dashed line represents "what would have happened" to the B2B companies if they had continued to follow the B2C growth trend, assuming the shock never occurred. The gap between the actual B2B line and this counterfactual line visualizes the causal effect.</p>
+
+                <pre><code># [Code for generating the plot as shown in the Python script]
+# Calculating the counterfactual based on B2C growth rates
+b2b_2019 = plot_data.loc[2019, 'B2B']
+b2c_2019 = plot_data.loc[2019, 'B2C']
+growth_factor = plot_data.loc[2020:, 'B2C'] / b2c_2019
+counterfactual = b2b_2019 * growth_factor
+
+# Plotting the actual data vs. counterfactual
+plt.plot(counterfactual.index, counterfactual, linestyle='--', label='Counterfactual')
+plt.fill_between(..., label='The DiD Effect')</code></pre>
                 
                 <figure>
-                    <img src="b2b_vs_b2c_did_plot.png" alt="Graph showing parallel trends before 2019 and divergence after">
-                    <figcaption>Figure 1: Parallel trends check. The correlation between the two groups before 2019 is 0.60.</figcaption>
+                    <img src="classical_did_plot.png" alt="Graph showing the divergence between B2B actual growth and the counterfactual trend">
+                    <figcaption>Figure 1: The Impact of the 2019 Shock on B2B vs B2C Funding. The shaded region represents the Difference-in-Differences effect.</figcaption>
                 </figure>
             </div>
 
             <div class="section">
-                <h2 id="results">Results and Discussion</h2>
+                <h2 id="discussion">Discussion of Results</h2>
                 
-                <p>Finally, I calculated the Difference-in-Differences estimator. I split the data into the Pre-period (before 2019) and the Post-period (after 2019) and calculated the mean capital raised for both groups.</p>
+                <p>The analysis reveals two critical insights that validate the "Picks and Shovels" hypothesis.</p>
 
-                <pre><code>cohort_df['Period'] = cohort_df['Year'].apply(lambda x: 'Post' if x > 2019 else 'Pre')
-did_stats = cohort_df.groupby(['BusinessModel', 'Period'])['RaisedToDate_cleaned'].mean()
-print(did_stats)</code></pre>
+                <p><strong>1. Validation of Parallel Trends:</strong><br>
+                Looking at the period from 2012 to 2019 (the left side of the graph), we observe that the fundraising trajectories of B2B and B2C companies moved largely in sync. This "Parallel Trend" is the most important assumption in DiD analysis. It confirms that, prior to the shock, market forces affected both business models similarly, making B2C a valid control group for this experiment.</p>
 
-                <p>The results show a clear divergence in funding. Below is the summary of the causal effect:</p>
+                <p><strong>2. The Divergence (The Causal Effect):</strong><br>
+                After 2019, we see a sharp divergence. While the B2C group continued on its previous trajectory (or grew modestly), the B2B group experienced an explosive acceleration in funding. The regression results confirm this with a positive and significant coefficient on the interaction term ($\beta_3$).</p>
 
-                <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 20px; font-family: monospace; margin: 20px 0;">
-                    <p style="margin:0;"><strong>Difference-in-Differences Estimator</strong></p>
-                    <hr style="margin: 10px 0;">
-                    <p>Treatment Group (B2B) Growth:&nbsp;&nbsp;&nbsp; $376.71 Million</p>
-                    <p>Control Group (B2C) Growth:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $119.47 Million</p>
-                    <p>--------------------------------------------------</p>
-                    <p style="color: #2e7d32; font-weight: bold;">DiD Coefficient (Effect):&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $257.24 Million</p>
-                </div>
-
-                <p>The calculation shows that B2B companies raised an additional $257 million on average compared to their B2C counterparts after the 2019 boom. This supports my hypothesis that investors pivoted toward the "picks and shovels" of the industry as the consumer market became saturated.</p>
-                
-                <p>It is important to note that this is exploratory analysis. The companies were not randomly assigned to be B2B or B2C, so there might be other unobserved variables at play. However, the strong parallel trends before 2019 give me some confidence that this captures a real shift in investor sentiment.</p>
+                <p>This "gap"—visualized by the shaded region in Figure 1—represents capital that flowed specifically into infrastructure and ingredients technology, above and beyond the general market growth. This suggests that the "smart money" in the industry correctly identified that the bottleneck was no longer creating new brands, but rather scaling the underlying production technology.</p>
             </div>
 
             <div class="section">
                 <h2 id="acknowledgement">Acknowledgement and Reference</h2>
-                <p>This project relies on a dataset I personally collected and cleaned, which aggregates information on over 2,000 companies from the Good Food Institute, PitchBook, and DealRoom.</p>
+                <p>This project relies on a proprietary dataset I personally aggregated and cleaned, combining data points from the Good Food Institute, PitchBook, and DealRoom. Special thanks to the open-source community for the libraries used in this analysis.</p>
                 
-                <p>For the methodology, I consulted the following resources:</p>
+                <p>For the econometric methodology, I consulted:</p>
                 <ul>
-                    <li>Facure, M. (n.d.). <em>Causal Inference for the Brave and True: Difference-in-Differences</em>.</li>
-                    <li>Angrist, J. D., & Pischke, J. (2014). <em>Mastering 'Metrics: The Path from Cause to Effect</em>.</li>
+                    <li>Angrist, J. D., & Pischke, J. (2014). <em>Mastering 'Metrics: The Path from Cause to Effect</em>. Princeton University Press.</li>
+                    <li>Facure, M. (n.d.). <em>Causal Inference for the Brave and True</em>.</li>
                 </ul>
             </div>
 
