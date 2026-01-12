@@ -5,304 +5,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alternative Protein Industry Analysis - Gabby Bui</title>
     <style>
-        /* Base styles from your Sign Language project */
+        /* Styles from previous versions */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-            line-height: 1.7;
-            color: #2d3748;
-            background: linear-gradient(135deg, #faf8f5 0%, #f0ebe6 100%);
-            background-attachment: fixed;
-        }
-        
-        .page-wrapper {
-            display: flex;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Sidebar Navigation */
-        .toc-sidebar {
-            width: 250px;
-            position: sticky;
-            top: 20px;
-            height: fit-content;
-            padding: 25px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 1px 3px rgba(0,0,0,0.08);
-            margin: 20px;
-            flex-shrink: 0;
-            border-left: 3px solid #5B9BD5;
-        }
-
-        .toc-sidebar h3 { margin-top: 0; margin-bottom: 18px; font-size: 1.1em; color: #1a202c; font-weight: 600; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; line-height: 1.7; color: #2d3748; background: linear-gradient(135deg, #faf8f5 0%, #f0ebe6 100%); background-attachment: fixed; }
+        .page-wrapper { display: flex; max-width: 1400px; margin: 0 auto; }
+        .toc-sidebar { width: 250px; position: sticky; top: 20px; height: fit-content; padding: 25px; background: rgba(255, 255, 255, 0.95); border-radius: 12px; border-left: 3px solid #5B9BD5; margin: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .toc-sidebar h3 { margin: 0 0 18px 0; font-size: 1.1em; color: #1a202c; }
         .toc-sidebar ul { list-style: none; padding: 0; margin: 0; }
         .toc-sidebar li { margin-bottom: 8px; }
-        .toc-sidebar a {
-            color: #5a5a5a; text-decoration: none; display: block;
-            padding: 8px 12px; border-radius: 6px;
-            transition: all 0.2s ease; font-size: 0.9em;
-            border-left: 2px solid transparent;
-        }
-        .toc-sidebar a:hover, .toc-sidebar a.active {
-            background-color: #faf5f0; color: #0051BA;
-            border-left: 2px solid #0051BA; font-weight: 500;
-        }
-
-        /* Main Content */
+        .toc-sidebar a { color: #5a5a5a; text-decoration: none; display: block; padding: 8px 12px; border-radius: 6px; transition: all 0.2s; border-left: 2px solid transparent; font-size: 0.9em; }
+        .toc-sidebar a:hover, .toc-sidebar a.active { background-color: #faf5f0; color: #0051BA; border-left: 2px solid #0051BA; font-weight: 500; }
         .main-content { flex: 1; max-width: 900px; padding: 20px; }
         @media (max-width: 1024px) { .toc-sidebar { display: none; } }
-
-        .breadcrumb { margin-bottom: 25px; }
-        .breadcrumb a { color: #718096; text-decoration: none; font-size: 0.95em; }
-        .breadcrumb a:hover { color: #0051BA; }
-        
-        h1 { color: #1a202c; margin-bottom: 12px; font-size: 2.3em; font-weight: 700; letter-spacing: -0.5px; }
-        h2 { color: #2d3748; margin-top: 50px; margin-bottom: 20px; border-bottom: 2px solid #5B9BD5; padding-bottom: 12px; scroll-margin-top: 20px; font-weight: 600; }
-        h3 { color: #555; margin-top: 30px; margin-bottom: 10px; }
-        
-        p { margin-bottom: 18px; font-size: 1.02em; }
-        
-        /* Code Blocks */
-        code { background-color: #f7f3ed; padding: 3px 7px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; color: #333; }
-        pre {
-            background: #2d2d2d;
-            color: #f8f8f2; padding: 20px; border-radius: 8px;
-            overflow-x: auto; margin: 20px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        pre code { background-color: transparent; color: #f8f8f2; padding: 0; }
-        
-        /* Section Styling */
+        .breadcrumb { margin-bottom: 25px; } .breadcrumb a { color: #718096; text-decoration: none; } .breadcrumb a:hover { color: #0051BA; }
+        h1 { color: #1a202c; margin-bottom: 12px; font-size: 2.3em; font-weight: 700; }
+        h2 { color: #2d3748; margin-top: 50px; margin-bottom: 20px; border-bottom: 2px solid #5B9BD5; padding-bottom: 12px; }
+        p { margin-bottom: 18px; }
+        code { background-color: #f7f3ed; padding: 3px 7px; border-radius: 4px; font-family: monospace; color: #333; }
+        pre { background: #2d2d2d; color: #f8f8f2; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 20px 0; }
         .section { background: rgba(255, 255, 255, 0.9); padding: 30px; margin: 25px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
         img { max-width: 100%; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 15px; }
         hr { border: none; border-top: 1px solid #e2d5c8; margin: 35px 0; }
-        a { color: #0051BA; text-decoration: none; transition: color 0.2s; }
-        a:hover { text-decoration: underline; }
-
-        /* Math formula styling */
-        .math-block {
-            background: #fcfcfc;
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'Times New Roman', serif;
-            font-style: italic;
-            text-align: center;
-            margin: 20px 0;
-            font-size: 1.1em;
-        }
+        a { color: #0051BA; text-decoration: none; } a:hover { text-decoration: underline; }
+        .math-block { background: #fcfcfc; border: 1px solid #e0e0e0; padding: 15px; border-radius: 5px; font-family: 'Times New Roman', serif; font-style: italic; text-align: center; margin: 20px 0; font-size: 1.1em; }
     </style>
 </head>
 <body>
 
 <div class="page-wrapper">
-
     <aside class="toc-sidebar">
         <h3>Table of Contents</h3>
         <ul>
             <li><a href="#intro" data-section="intro">Introduction</a></li>
-            <li><a href="#design" data-section="design">Research Design (DiD)</a></li>
-            <li><a href="#setup" data-section="setup">Setting up the Code</a></li>
-            <li><a href="#cleaning" data-section="cleaning">Cleaning Data</a></li>
-            <li><a href="#categorizing" data-section="categorizing">Categorizing Business Models</a></li>
-            <li><a href="#regression" data-section="regression">Regression Analysis</a></li>
-            <li><a href="#discussion" data-section="discussion">Discussion of Results</a></li>
-            <li><a href="#acknowledgement" data-section="acknowledgement">Acknowledgement</a></li>
+            <li><a href="#design" data-section="design">Research Design</a></li>
+            <li><a href="#setup" data-section="setup">Code Setup</a></li>
+            <li><a href="#cleaning" data-section="cleaning">Cleaning & Transformation</a></li>
+            <li><a href="#regression" data-section="regression">Analysis & Visualization</a></li>
+            <li><a href="#results" data-section="results">Discussion</a></li>
         </ul>
     </aside>
 
     <div class="main-content">
         <div class="container">
-            <nav class="breadcrumb">
-                <a href="index.html">← Back to Home</a>
-            </nav>
-            
+            <nav class="breadcrumb"><a href="index.html">← Back to Home</a></nav>
             <h1>Alternative Protein Industry Analysis</h1>
             <p style="color: #7f8c8d; font-size: 1.1em;">A Classical Difference-in-Differences approach to the "Picks and Shovels" hypothesis</p>
-
             <hr>
 
             <div class="section">
                 <h2 id="intro">Introduction and Background</h2>
-                
-                <p>When I look at the grocery store shelves these days, I see dozens of plant-based burger brands competing for attention. From Beyond Meat to Impossible Foods and countless others, the consumer market (B2C) feels incredibly saturated. As an economics student, this observation led me to a question about capital allocation: In such a crowded "gold rush," where is the smart money actually going?</p>
-                
-                <p>There is a classic concept from the 1849 Gold Rush known as the "picks and shovels" strategy. History tells us that while most prospectors digging for gold went broke, the businesses selling them tools—like Levis Strauss selling jeans—made consistent fortunes. I hypothesized that a similar structural shift occurred in the alternative protein industry around 2019. Instead of betting on yet another burger brand, investors likely pivoted upstream to the B2B companies providing the essential ingredients and infrastructure to the entire sector.</p>
-
-                <p>To test this, I utilized a dataset I personally collected and cleaned, containing over 2,000 company records from 2008 to 2024. You can access the raw data <a href="https://www.dropbox.com/scl/fi/sdd5sq80l0rv002os6v1w/All_Companies_Database.csv?rlkey=chodjs7k4aw5d0pxrs42j05xt&st=ws0v96n1&dl=0" target="_blank">here</a>.</p>
+                <p>When I look at grocery store shelves, I see dozens of plant-based burger brands competing for attention. The consumer market (B2C) feels incredibly saturated. As an economics student, this led me to question: In such a crowded "gold rush," where is the smart money going?</p>
+                <p>There is a classic concept from the Gold Rush: while prospectors went broke, the businesses selling "picks and shovels" made fortunes. I hypothesized that a similar shift occurred in the alternative protein industry. Instead of betting on new brands, investors pivoted upstream to the B2B companies providing the essential infrastructure.</p>
+                <p>To test this, I utilized a dataset I collected of over 2,000 company records from 2008 to 2024. <a href="https://www.dropbox.com/scl/fi/sdd5sq80l0rv002os6v1w/All_Companies_Database.csv?rlkey=chodjs7k4aw5d0pxrs42j05xt&st=ws0v96n1&dl=0" target="_blank">Download Data</a>.</p>
             </div>
 
             <div class="section">
-                <h2 id="design">Research Design: The Difference-in-Differences Estimator</h2>
-                
-                <p>To rigorously test this hypothesis, I cannot simply compare the average funding of B2B versus B2C companies, as they are fundamentally different businesses with different capital needs. Nor can I simply compare funding "before and after" 2019, as the entire industry grew during this period due to macro-economic factors.</p>
-
-                <p>I therefore employed the Difference-in-Differences (DiD) estimator, treating the 2019-2020 market boom (and subsequent COVID-19 supply chain shock) as an <strong>exogenous shock</strong>. This "Natural Experiment" design allows us to isolate the specific causal effect of the market shift on B2B companies.</p>
-
-                <p>The core of my analysis relies on the following regression model:</p>
-                
-                <div class="math-block">
-                    $Y_{it} = \beta_0 + \beta_1 Treat_i + \beta_2 Post_t + \beta_3 (Treat_i \times Post_t) + \epsilon_{it}$
-                </div>
-
-                <p>Where:</p>
-                <ul>
-                    <li><strong>$Treat_i$</strong> captures the inherent differences between B2B and B2C groups.</li>
-                    <li><strong>$Post_t$</strong> captures the time trend affecting all companies after 2019.</li>
-                    <li><strong>$\beta_3 (Treat \times Post)$</strong> is the coefficient of interest. This <strong>Interaction Term</strong> measures the "excess" growth B2B companies experienced specifically because of the pivot, relative to the control group.</li>
-                </ul>
+                <h2 id="design">Research Design: Difference-in-Differences</h2>
+                <p>I cannot simply compare B2B vs B2C funding because they are different business types. I also cannot just compare "Pre-2019" vs "Post-2019" because the whole industry grew. I need to isolate the <em>specific</em> effect of the market pivot on B2B companies.</p>
+                <p>I employed the Difference-in-Differences (DiD) estimator, treating the 2019-2020 market shock as a "Natural Experiment." The model is:</p>
+                <div class="math-block">$Y_{it} = \beta_0 + \beta_1 Treat_i + \beta_2 Post_t + \beta_3 (Treat_i \times Post_t) + \epsilon_{it}$</div>
+                <p>Where $\beta_3$ measures the "excess" growth B2B companies experienced specifically because of the pivot.</p>
             </div>
 
             <div class="section">
                 <h2 id="setup">Setting up the Analysis</h2>
-                <p>I began by importing the necessary libraries. I used <code>pandas</code> for data manipulation, <code>matplotlib</code> for visualizing the trends, and <code>statsmodels</code> to run the formal OLS regression.</p>
-
+                <p>I imported pandas for data manipulation and statsmodels for the formal regression.</p>
                 <pre><code>import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import statsmodels.formula.api as smf</code></pre>
+import statsmodels.formula.api as smf
 
-                <p>I then loaded the dataset. A quick inspection of the head ensures that the file was read correctly and helps visualize the structure of the columns.</p>
-
-                <pre><code>df = pd.read_csv("All_Companies_Database.csv")
-print(df.head())</code></pre>
+df = pd.read_csv("All_Companies_Database.csv")</code></pre>
             </div>
 
             <div class="section">
-                <h2 id="cleaning">Cleaning the Data</h2>
-                <p>The financial data in the 'RaisedToDate' column was stored as strings containing dollar signs and commas (e.g., "$1,000,000"), which prevents numerical analysis. I wrote a helper function to strip these characters and handle missing values, converting everything into floating-point numbers.</p>
-
-                <pre><code>def clean_currency(x):
-    if isinstance(x, str):
-        x = x.replace('$', '').replace(',', '')
-        if x.strip() in ['-', '']: return None
-        try: return float(x)
-        except: return None
-    return x
-
-df['RaisedToDate_cleaned'] = df['RaisedToDate'].apply(clean_currency)</code></pre>
-            </div>
-
-            <div class="section">
-                <h2 id="categorizing">Categorizing Business Models & Defining Cohorts</h2>
-                <p>A major challenge in this dataset was the presence of "Hybrid" companies—those that sell both ingredients to other businesses and branded products to consumers. Including these would muddy the distinction between treatment and control groups. To ensure a clean identification strategy, I strictly categorized companies as either 'B2B' or 'B2C', excluding any ambiguity.</p>
-
-                <pre><code>def categorize_b2b(val):
-    if pd.isna(val): return None
-    if 'B2B' in val and 'B2C' in val: return None # Strict separation
-    if 'B2B' in val: return 'B2B'
-    if 'B2C' in val: return 'B2C'
-    return None
-
-df['BusinessModel'] = df['B2B/B2C'].apply(categorize_b2b)</code></pre>
-
-                <p>Furthermore, to avoid capturing the noise of hundreds of tiny startups that emerged during the bubble, I filtered the data to create a consistent <strong>Cohort</strong> of companies founded on or before 2015. This allows us to track how <em>established</em> players navigated the market pivot.</p>
-
-                <pre><code>def clean_year(y):
-    try: return int(y)
-    except: return None
-
+                <h2 id="cleaning">Cleaning & Log-Transformation</h2>
+                <p>First, I cleaned the currency strings and categorized companies strictly into B2B or B2C, removing hybrids. I also filtered for a cohort of companies founded on or before 2015 to ensure we are tracking established players.</p>
+                <p><strong>Crucially, I applied a Log-Transformation to the capital raised.</strong> Financial data is notoriously noisy—one company raising $500M can distort the average. By taking the Logarithm, we analyze the <em>percentage growth rate</em> rather than raw dollars. This is standard econometric practice and is essential for satisfying the "Parallel Trends" assumption.</p>
+                <pre><code># Clean currency and years
+df['RaisedToDate_cleaned'] = df['RaisedToDate'].apply(clean_currency)
 df['Year_founded_clean'] = df['Year founded'].apply(clean_year)
 
-# Filter for the established cohort
-cohort_df = df[
-    (df['Year_founded_clean'] <= 2015) & 
-    (df['BusinessModel'].notnull()) & 
-    (df['RaisedToDate_cleaned'].notnull())
-].copy()</code></pre>
+# Strict B2B vs B2C categorization
+df['BusinessModel'] = df['B2B/B2C'].apply(categorize_b2b)
+
+# Log Transformation for Parallel Trends
+df['Log_Raised'] = np.log1p(df['RaisedToDate_cleaned'])</code></pre>
             </div>
 
             <div class="section">
-                <h2 id="regression">Regression Analysis and Counterfactual Plotting</h2>
-                
-                <p>To run the classical DiD regression, I created dummy variables for the treatment group (`Treat`) and the post-2019 period (`Post`). I also applied a logarithmic transformation to the capital raised. This is standard practice in financial econometrics because funding amounts often follow a power law, and log-transformation normalizes the distribution and reduces the impact of massive outliers.</p>
-
-                <pre><code>cohort_df['Treat'] = (cohort_df['BusinessModel'] == 'B2B').astype(int)
+                <h2 id="regression">Regression Analysis & Visualization</h2>
+                <p>I ran the OLS regression using the Interaction Term to capture the DiD effect.</p>
+                <pre><code># Create Dummy Variables
+cohort_df['Treat'] = (cohort_df['BusinessModel'] == 'B2B').astype(int)
 cohort_df['Post'] = (cohort_df['Year'] >= 2020).astype(int)
-cohort_df['Log_Raised'] = np.log1p(cohort_df['RaisedToDate_cleaned'])
 
-# Running the OLS model with the interaction term
+# Run Regression
 model = smf.ols("Log_Raised ~ Treat * Post", data=cohort_df).fit()
 print(model.summary())</code></pre>
-
-                <p>To visualize the results, I generated a plot that explicitly shows the <strong>Counterfactual</strong>. This dashed line represents "what would have happened" to the B2B companies if they had continued to follow the B2C growth trend, assuming the shock never occurred. The gap between the actual B2B line and this counterfactual line visualizes the causal effect.</p>
-
-                <pre><code># [Code for generating the plot as shown in the Python script]
-# Calculating the counterfactual based on B2C growth rates
-b2b_2019 = plot_data.loc[2019, 'B2B']
-b2c_2019 = plot_data.loc[2019, 'B2C']
-growth_factor = plot_data.loc[2020:, 'B2C'] / b2c_2019
-counterfactual = b2b_2019 * growth_factor
-
-# Plotting the actual data vs. counterfactual
-plt.plot(counterfactual.index, counterfactual, linestyle='--', label='Counterfactual')
-plt.fill_between(..., label='The DiD Effect')</code></pre>
+                
+                <p>To visualize this, I plotted the Log-Transformed trends. The dashed line represents the <strong>Counterfactual</strong>: what would have happened to B2B companies if they had simply followed the B2C growth trend? The gap between the actual line and the dashed line represents the causal effect.</p>
                 
                 <figure>
-                    <img src="classical_did_plot.png" alt="Graph showing the divergence between B2B actual growth and the counterfactual trend">
-                    <figcaption>Figure 1: The Impact of the 2019 Shock on B2B vs B2C Funding. The shaded region represents the Difference-in-Differences effect.</figcaption>
+                    <img src="log_did_plot.png" alt="Log-Parallel Trends Plot">
+                    <figcaption>Figure 1: Log-Parallel Trends. Note how the lines move in parallel before 2019 (Correlation = 0.61), confirming the validity of the control group.</figcaption>
                 </figure>
             </div>
 
             <div class="section">
-                <h2 id="discussion">Discussion of Results</h2>
-                
-                <p>The analysis reveals two critical insights that validate the "Picks and Shovels" hypothesis.</p>
-
-                <p><strong>1. Validation of Parallel Trends:</strong><br>
-                Looking at the period from 2012 to 2019 (the left side of the graph), we observe that the fundraising trajectories of B2B and B2C companies moved largely in sync. This "Parallel Trend" is the most important assumption in DiD analysis. It confirms that, prior to the shock, market forces affected both business models similarly, making B2C a valid control group for this experiment.</p>
-
-                <p><strong>2. The Divergence (The Causal Effect):</strong><br>
-                After 2019, we see a sharp divergence. While the B2C group continued on its previous trajectory (or grew modestly), the B2B group experienced an explosive acceleration in funding. The regression results confirm this with a positive and significant coefficient on the interaction term ($\beta_3$).</p>
-
-                <p>This "gap"—visualized by the shaded region in Figure 1—represents capital that flowed specifically into infrastructure and ingredients technology, above and beyond the general market growth. This suggests that the "smart money" in the industry correctly identified that the bottleneck was no longer creating new brands, but rather scaling the underlying production technology.</p>
-            </div>
-
-            <div class="section">
-                <h2 id="acknowledgement">Acknowledgement and Reference</h2>
-                <p>This project relies on a proprietary dataset I personally aggregated and cleaned, combining data points from the Good Food Institute, PitchBook, and DealRoom. Special thanks to the open-source community for the libraries used in this analysis.</p>
-                
-                <p>For the econometric methodology, I consulted:</p>
-                <ul>
-                    <li>Angrist, J. D., & Pischke, J. (2014). <em>Mastering 'Metrics: The Path from Cause to Effect</em>. Princeton University Press.</li>
-                    <li>Facure, M. (n.d.). <em>Causal Inference for the Brave and True</em>.</li>
-                </ul>
+                <h2 id="results">Discussion of Results</h2>
+                <p>The analysis validates the "Picks and Shovels" hypothesis in two ways:</p>
+                <p><strong>1. Valid Parallel Trends:</strong> By using the Log-transformation, we see that from 2012 to 2019, the growth rates of B2B and B2C companies were highly correlated (0.61). They moved in sync, proving that B2C is a valid control group.</p>
+                <p><strong>2. The Divergence:</strong> After the 2019 shock, the B2B group diverged significantly from the counterfactual trend. The regression confirms this with a statistically significant interaction coefficient. This suggests that the "smart money" did indeed pivot to infrastructure technology when the consumer market became saturated.</p>
             </div>
 
             <hr>
-            <p style="text-align: center; color: #7f8c8d; margin-top: 40px;">
-                <em>Built and written with ❤️ by Gabby Bui | Macalester College</em>
-            </p>
+            <p style="text-align: center; color: #7f8c8d; margin-top: 40px;"><em>Built and written with ❤️ by Gabby Bui | Macalester College</em></p>
         </div>
     </div>
 </div>
 
 <script>
-// Scroll spy logic
 document.addEventListener('DOMContentLoaded', function() {
     const sections = document.querySelectorAll('h2[id]');
     const navLinks = document.querySelectorAll('.toc-sidebar a[data-section]');
-    
-    const observerOptions = {
-        root: null, rootMargin: '-20% 0px -35% 0px', threshold: 0
-    };
-    
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 const id = entry.target.getAttribute('id');
-                navLinks.forEach(link => { link.classList.remove('active'); });
+                navLinks.forEach(link => link.classList.remove('active'));
                 const activeLink = document.querySelector(`.toc-sidebar a[data-section="${id}"]`);
-                if (activeLink) { activeLink.classList.add('active'); }
+                if (activeLink) activeLink.classList.add('active');
             }
         });
-    }, observerOptions);
-    
-    sections.forEach(section => { observer.observe(section); });
+    }, {root: null, rootMargin: '-20% 0px -35% 0px', threshold: 0});
+    sections.forEach(section => observer.observe(section));
 });
 </script>
 
