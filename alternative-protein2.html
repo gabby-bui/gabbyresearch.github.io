@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Alternative Protein Industry Analysis - Gabby Bui</title>
     <style>
+        /* --- COPYING YOUR EXISTING STYLE FOR CONSISTENCY --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
@@ -21,7 +22,7 @@
             margin: 0 auto;
         }
 
-        /* Sidebar Navigation */
+        /* Sidebar */
         .toc-sidebar {
             width: 250px;
             position: sticky;
@@ -36,29 +37,22 @@
             border-left: 3px solid #5B9BD5;
         }
 
-        .toc-sidebar h3 {
-            margin-top: 0; margin-bottom: 18px; font-size: 1.1em;
-            color: #1a202c; font-weight: 600; letter-spacing: 0.3px;
-        }
-
+        .toc-sidebar h3 { margin-top: 0; margin-bottom: 18px; font-size: 1.1em; color: #1a202c; font-weight: 600; }
         .toc-sidebar ul { list-style: none; padding: 0; margin: 0; }
         .toc-sidebar li { margin-bottom: 8px; }
-
         .toc-sidebar a {
             color: #5a5a5a; text-decoration: none; display: block;
             padding: 8px 12px; border-radius: 6px;
             transition: all 0.2s ease; font-size: 0.9em;
             border-left: 2px solid transparent;
         }
-
         .toc-sidebar a:hover, .toc-sidebar a.active {
             background-color: #faf5f0; color: #0051BA;
             border-left: 2px solid #0051BA; font-weight: 500;
         }
 
-        /* Main Content Area */
+        /* Content */
         .main-content { flex: 1; max-width: 900px; padding: 20px; }
-
         @media (max-width: 1024px) { .toc-sidebar { display: none; } }
 
         .breadcrumb { margin-bottom: 25px; }
@@ -72,7 +66,7 @@
         p { margin-bottom: 18px; font-size: 1.02em; }
         
         /* Code Blocks */
-        code { background-color: #f7f3ed; padding: 3px 7px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; }
+        code { background-color: #f7f3ed; padding: 3px 7px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; color: #d63384; }
         pre {
             background: linear-gradient(135deg, #2d2d2d 0%, #1a1a1a 100%);
             color: #f8f8f2; padding: 20px; border-radius: 8px;
@@ -81,13 +75,13 @@
         }
         pre code { background-color: transparent; color: #f8f8f2; padding: 0; }
         
-        /* Special Sections */
+        /* Highlights */
         .section { background: rgba(255, 255, 255, 0.9); padding: 30px; margin: 25px 0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
         .analogy { background: linear-gradient(135deg, #fff9e6 0%, #fff5db 100%); padding: 18px; border-left: 4px solid #f0c97d; margin: 20px 0; border-radius: 6px; }
         .important { background: linear-gradient(135deg, #e8f5e9 0%, #d7f0d9 100%); padding: 18px; border-left: 4px solid #81c784; margin: 20px 0; border-radius: 6px; }
-        .hypothesis { background: linear-gradient(135deg, #e3f2fd 0%, #d1e8f7 100%); padding: 18px; border-left: 4px solid #64b5f6; margin: 20px 0; border-radius: 6px; }
+        .disclaimer { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); padding: 18px; border-left: 4px solid #e57373; margin: 20px 0; border-radius: 6px; }
 
-        img { max-width: 100%; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        img { max-width: 100%; border-radius: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 15px; }
         hr { border: none; border-top: 1px solid #e2d5c8; margin: 35px 0; }
         a { color: #0051BA; text-decoration: none; transition: color 0.2s; }
         a:hover { text-decoration: underline; }
@@ -100,13 +94,14 @@
     <aside class="toc-sidebar">
         <h3>Table of Contents</h3>
         <ul>
-            <li><a href="#background" data-section="background">Background & Hypothesis</a></li>
+            <li><a href="#background" data-section="background">The "Picks & Shovels" Hypothesis</a></li>
             <li><a href="#dataset" data-section="dataset">The Dataset</a></li>
-            <li><a href="#methodology" data-section="methodology">The DiD Estimator</a></li>
-            <li><a href="#coding" data-section="coding">Coding the Analysis</a></li>
-            <li><a href="#trends" data-section="trends">Visualizing Parallel Trends</a></li>
+            <li><a href="#theory" data-section="theory">The DiD Estimator</a></li>
+            <li><a href="#step1" data-section="step1">Step 1: Cleaning & Categorizing</a></li>
+            <li><a href="#step2" data-section="step2">Step 2: The Cohort Filter</a></li>
+            <li><a href="#step3" data-section="step3">Step 3: Parallel Trends</a></li>
+            <li><a href="#step4" data-section="step4">Step 4: The Analysis</a></li>
             <li><a href="#results" data-section="results">Key Findings</a></li>
-            <li><a href="#acknowledgement" data-section="acknowledgement">Acknowledgement</a></li>
         </ul>
     </aside>
 
@@ -117,71 +112,88 @@
             </nav>
             
             <h1>Alternative Protein Industry Analysis</h1>
-            <p style="color: #7f8c8d; font-size: 1.1em;">Using Difference-in-Differences to Analyze the "Picks & Shovels" Pivot</p>
+            <p style="color: #7f8c8d; font-size: 1.1em;">Where did the "Smart Money" go after the 2019 boom?</p>
 
             <hr>
 
             <div class="section">
                 <h2 id="background">1. Background: The "Picks and Shovels" Hypothesis</h2>
                 
-                <p>The Alternative Protein industry (think Impossible Foods, Beyond Meat) experienced a massive boom around 2019. Suddenly, supermarket shelves were flooded with new plant-based burger brands. However, as an Economics student, I began to wonder: in such a crowded gold rush, where does the "smart money" actually go?</p>
+                <p>Imagine you're standing in a grocery store in 2023, and you see dozens of plant-based burger brands competing for shelf space. Beyond Meat, Impossible Foods, and countless startups all promise the same thing—a better burger. The market is crowded, competitive, and honestly, a bit saturated.</p>
                 
-                <p>There's a famous saying from the California Gold Rush: <em>"When everyone is digging for gold, sell shovels."</em></p>
+                <p>Now, here's a question: If you were a venture capitalist with millions to invest, would you put your money into another burger brand? Or would you look upstream at the companies supplying the ingredients, technology, and infrastructure that <strong>ALL</strong> these burger brands need?</p>
                 
-                <div class="hypothesis">
-                    <strong>My Research Question:</strong> Did investors pivot to B2B companies (the ones providing ingredients and tech) significantly more than B2C companies (consumer brands) after the 2019 boom?
+                <div class="analogy">
+                    <strong>The "Picks and Shovels" Strategy</strong><br>
+                    During the 1840s California Gold Rush, most prospectors went broke searching for gold. But you know who made consistent money? The people selling picks, shovels, and jeans to the prospectors. Companies like Levi Strauss didn't need to find gold themselves—they just needed people to keep looking for it.
                 </div>
 
-                <p>To answer this, I can't just compare B2B vs. B2C companies directly (because they are fundamentally different businesses). I also can't just compare "Before 2019" vs. "After 2019" (because the whole market grew). I need a method that isolates the <em>specific effect</em> of being a B2B company in the post-boom era.</p>
+                <p>This analysis explores a specific hypothesis: <strong>Did investors pivot toward B2B companies (picks & shovels) and away from B2C companies (consumer brands) after the alternative protein boom of 2019-2020?</strong></p>
+
+                <p>Instead of betting on which burger brand will win, smart investors bet on the companies that supply ingredients (like pea protein isolate, fermentation technology, or scaffolding) to the entire industry. These B2B (business-to-business) companies are the hidden backbone of the food revolution.</p>
+
+                <div class="disclaimer">
+                    <strong>Important Note on Causality:</strong><br>
+                    Before I dive into the methodology, I want to be completely transparent. This is <em>exploratory analysis</em>, not definitive causal inference. Companies choose whether to be B2B or B2C; they're not randomly assigned. This means there could be pre-existing differences between these groups. However, as you'll see, the parallel trends before 2020 are remarkably strong (correlation of ~0.60), which gives me confidence that we're capturing a meaningful shift in investor sentiment.
+                </div>
             </div>
 
             <div class="section">
                 <h2 id="dataset">2. The Dataset</h2>
-                <p>I utilized the <code>All_Companies_Database.csv</code>, a comprehensive dataset I personally collected and cleaned. It tracks fundraising data for over 2,000 companies in the alternative protein space.</p>
+                <p>To answer this, I collected and cleaned a massive dataset aggregating records from the Good Food Institute, PitchBook, DealRoom, and Patent Databases.</p>
+                
                 <ul>
-                    <li><strong>Sample Size:</strong> ~2,400 companies</li>
-                    <li><strong>Key Variables:</strong> <code>RaisedToDate</code> (Capital Raised), <code>B2B/B2C</code> (Business Model), <code>Year Founded</code>.</li>
-                    <li><strong>Filter:</strong> I focused on a specific "Cohort" of companies founded <strong>on or before 2015</strong>. This ensures we are tracking established players pivoting or accelerating, rather than just capturing the noise of tiny new startups.</li>
+                    <li><strong>Volume:</strong> 20,967 data points covering 2,136 company records.</li>
+                    <li><strong>Timeframe:</strong> 2008 to 2024.</li>
+                    <li><strong>Key Variables:</strong>
+                        <ul>
+                            <li><code>RaisedToDate</code>: Total capital raised (in Millions USD).</li>
+                            <li><code>B2B/B2C</code>: The business model (Treatment vs Control).</li>
+                            <li><code>Year Founded</code>: Used to filter for established companies.</li>
+                        </ul>
+                    </li>
                 </ul>
+                
+                <p>You can access the raw dataset here: 
+                    <a href="https://www.dropbox.com/scl/fi/sdd5sq80l0rv002os6v1w/All_Companies_Database.csv?rlkey=chodjs7k4aw5d0pxrs42j05xt&st=ws0v96n1&dl=0" target="_blank">
+                        Download All_Companies_Database.csv
+                    </a>
+                </p>
             </div>
 
             <div class="section">
-                <h2 id="methodology">3. The Difference-in-Differences (DiD) Estimator</h2>
+                <h2 id="theory">3. The Difference-in-Differences (DiD) Estimator</h2>
                 
-                <p>To verify my "Picks and Shovels" hypothesis, I used the Difference-in-Differences estimator. This is a statistical technique often used in econometrics to mimic an experimental research design using observational data.</p>
+                <p>To verify the hypothesis, I used the <strong>Difference-in-Differences (DiD)</strong> estimator. In econometrics, this is a method used to mimic an experimental design using observational data by studying the differential effect of a treatment on a 'treatment group' versus a 'control group'.</p>
 
-                <div class="analogy">
-                    <strong>The Intuition:</strong> Imagine two runners, Runner A (B2B) and Runner B (B2C). Before 2019, they were running at similar speeds. After the starting gun fired in 2019 (the Boom), Runner A suddenly sped up much faster than Runner B. DiD measures that <em>extra</em> burst of speed Runner A got, subtracting out the speed they both would have gained anyway.
-                </div>
+                <p>In our case:</p>
+                <ul>
+                    <li><strong>Treatment Group:</strong> B2B Companies (The "Shovel Sellers")</li>
+                    <li><strong>Control Group:</strong> B2C Companies (The "Gold Diggers")</li>
+                    <li><strong>Event:</strong> The 2019 Industry Boom</li>
+                </ul>
 
-                <p>The mathematical model looks like this:</p>
+                <p>The mathematical model we are estimating is:</p>
                 <p style="background: #f7f3ed; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; text-align: center;">
                     $Y_{it} = \beta_0 + \beta_1 B2B_i + \beta_2 Post_t + \beta_3 (B2B_i \times Post_t) + \epsilon_{it}$
                 </p>
-                <ul>
-                    <li><strong>$\beta_1$ (Treatment):</strong> Accounts for inherent differences between B2B and B2C.</li>
-                    <li><strong>$\beta_2$ (Time):</strong> Accounts for the general market inflation after 2019.</li>
-                    <li><strong>$\beta_3$ (The DiD Coefficient):</strong> This is the golden number! It tells us the <em>extra</em> funding B2B companies received specifically because of the post-2019 pivot.</li>
-                </ul>
+                
+                <p>Where $\beta_3$ is the coefficient of interest. It tells us: <em>"How much extra funding did B2B companies get compared to B2C companies, specifically because of the post-2019 shift?"</em></p>
             </div>
 
             <div class="section">
-                <h2 id="coding">4. Coding the Analysis in Python</h2>
-                <p>Here is the Python workflow I built to clean the data and perform the analysis. I used <code>pandas</code> for data manipulation and <code>matplotlib</code> to visualize the trends.</p>
-
-                <h3>Step 1: Cleaning & Categorizing</h3>
-                <p>First, I had to clean the currency strings (removing '$' and ',') and categorize companies into strict B2B (Treatment) and B2C (Control) groups, excluding hybrids to keep the comparison clean.</p>
+                <h2 id="step1">Step 1: Cleaning & Categorizing</h2>
+                <p>Real-world data is messy. The financial data came in strings like "$1,000,000" or "-" for missing values. My first step was to write helper functions to convert these into clean float numbers and strictly categorize companies. I excluded "Hybrid" companies to ensure a clean comparison between pure B2B and pure B2C models.</p>
 
                 <pre><code>import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-# 1. Load Data
+# Load Data
 df = pd.read_csv("All_Companies_Database.csv")
 
-# 2. Cleaning Functions
+# Helper function to clean currency strings
 def clean_currency(x):
-    """Converts string currency (e.g., '$1,000') to float."""
     if isinstance(x, str):
         x = x.replace('$', '').replace(',', '')
         if x.strip() in ['-', '']: return None
@@ -189,28 +201,33 @@ def clean_currency(x):
         except: return None
     return x
 
+# Helper function to categorize Business Model
 def categorize_b2b(val):
-    """Classifies company as B2B, B2C, or Hybrid."""
     if pd.isna(val): return None
-    if 'B2B' in val and 'B2C' in val: return 'Hybrid' 
+    if 'B2B' in val and 'B2C' in val: return 'Hybrid' # Exclude mixed models
     if 'B2B' in val: return 'B2B (Treatment)'
     if 'B2C' in val: return 'B2C (Control)'
     return None
 
-# 3. Apply Cleaning
+# Apply the cleaning
 df['RaisedToDate_cleaned'] = df['RaisedToDate'].apply(clean_currency)
 df['BusinessModel'] = df['B2B/B2C'].apply(categorize_b2b)</code></pre>
+            </div>
 
-                <h3>Step 2: The "Cohort" Filter</h3>
-                <p>This was a crucial step. I only included companies founded <strong>before 2015</strong>. This filters out the "noise" of hundreds of tiny startups that formed during the bubble and lets us see how <em>established</em> companies fared.</p>
+            <div class="section">
+                <h2 id="step2">Step 2: The Cohort Filter</h2>
+                <p>This is arguably the most critical step in the analysis. If I included every company, the data would be noisy because hundreds of tiny startups emerged during the bubble (2020-2022).</p>
+                
+                <p>To see if investors <em>pivoted</em>, I need to look at established companies. So, I filtered the dataset to create a <strong>"Pre-Boom Cohort"</strong>: companies founded <strong>on or before 2015</strong>. These companies existed before the hype, allowing us to track how their fortunes changed when the market exploded.</p>
 
-<pre><code># 4. Filter Cohort (Founded <= 2015)
+<pre><code># Clean the 'Year Founded' column
 def clean_year(y):
     try: return int(y)
     except: return None
 
 df['Year_founded_clean'] = df['Year founded'].apply(clean_year)
 
+# Create the Cohort
 cohort_df = df[
     (df['Year_founded_clean'] <= 2015) & 
     (df['BusinessModel'].isin(['B2B (Treatment)', 'B2C (Control)'])) & 
@@ -219,68 +236,86 @@ cohort_df = df[
             </div>
 
             <div class="section">
-                <h2 id="trends">5. Checking Parallel Trends</h2>
-                <p>The most important assumption in DiD analysis is <strong>Parallel Trends</strong>. Basically, if the 2019 boom hadn't happened, would B2B and B2C have continued to move together?</p>
+                <h2 id="step3">Step 3: Checking Parallel Trends</h2>
+                <p>For DiD to be valid, we need to satisfy the <strong>Parallel Trends Assumption</strong>. Basically, if the "treatment" (the 2019 boom) never happened, the gap between B2B and B2C should have remained constant. In visual terms, the lines on the graph should look roughly parallel before the event line.</p>
                 
-                <div class="important">
-                    <strong>Validation:</strong> My analysis found a <strong>0.60 correlation</strong> between B2B and B2C fundraising trends between 2012 and 2019. This strong correlation confirms that they were on similar trajectories before the split, making the subsequent divergence statistically meaningful.
-                </div>
+                <p>I grouped the data by year and business model to visualize the average capital raised over time.</p>
 
-                <p>I generated this plot to visualize the divergence:</p>
-                <pre><code># 5. Visual Check of Parallel Trends
+<pre><code># Group by Year and Model to get averages
 trend_data = cohort_df.groupby(['Year', 'BusinessModel'])['RaisedToDate_cleaned'].mean().unstack()
 
+# Plotting
 plt.figure(figsize=(12, 6))
-# Plot B2B
+
+# Plot B2B (Blue)
 plt.plot(trend_data.index, trend_data['B2B (Treatment)'], 
          label='B2B (Treatment)', color='#1f77b4', linewidth=3, marker='o')
-# Plot B2C
+
+# Plot B2C (Orange)
 plt.plot(trend_data.index, trend_data['B2C (Control)'], 
          label='B2C (Control)', color='#ff7f0e', linewidth=3, marker='s')
 
+# Add the Event Line
 plt.axvline(x=2019, color='red', linestyle='--', alpha=0.7, label='Boom Starts (2019)')
-plt.title('B2B vs B2C Fundraising Trajectories')
-plt.ylabel('Average Capital Raised ($ Millions)')
+
+plt.title('B2B vs B2C Fundraising Trajectories (Cohort Founded <= 2015)')
+plt.ylabel('Average Cumulative Capital Raised ($ Millions)')
 plt.legend()
+plt.grid(True, linestyle='--', alpha=0.5)
 plt.show()</code></pre>
-                
-                <figure style="margin: 20px 0; text-align: center;">
-                    <img src="b2b_vs_b2c_did_plot.png" alt="Graph showing B2B fundraising skyrocketing past B2C after 2019">
-                    <figcaption>Figure 1: The "Picks and Shovels" effect visible after 2019.</figcaption>
-                </figure>
+
+                <div class="important">
+                    <strong>Visual Validation:</strong> Looking at the years 2012–2019, the blue and orange lines move in sync (correlation ~0.60). This suggests that before the boom, market forces affected both types of companies similarly. This validates our use of DiD!
+                </div>
             </div>
 
             <div class="section">
-                <h2 id="results">6. Key Findings & Ideas</h2>
-                <p>The results of the Difference-in-Differences calculation were striking.</p>
-                
-                <pre><code># 6. Calculate DiD Values
+                <h2 id="step4">Step 4: The Result (Calculating DiD)</h2>
+                <p>Finally, we calculate the actual numbers. We split the timeline into "Pre" (<=2019) and "Post" (>2019) periods and calculate the average capital raised for each group in each period.</p>
+
+<pre><code># Define Pre/Post Period
 cohort_df['Period'] = cohort_df['Year'].apply(lambda x: 'Post (2020+)' if x > 2019 else 'Pre (<2019)')
+
+# Calculate the Means
 did_stats = cohort_df.groupby(['BusinessModel', 'Period'])['RaisedToDate_cleaned'].mean().reset_index()
 print(did_stats)</code></pre>
+                
+                <h3 id="results">Key Findings</h3>
+                <p>The Python script outputs the following table (summarized):</p>
 
-                <ul>
-                    <li><strong>Before 2019:</strong> B2B and B2C companies were raising similar amounts (~$360M - $370M average).</li>
-                    <li><strong>After 2019:</strong> B2B companies skyrocketed to an average of <strong>$748M</strong>, while B2C companies only grew to $479M.</li>
-                </ul>
+                <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <tr style="background: #5B9BD5; color: white; text-align: left;">
+                        <th style="padding: 12px 15px;">Metric</th>
+                        <th style="padding: 12px 15px;">Pre-2019 Avg</th>
+                        <th style="padding: 12px 15px;">Post-2019 Avg</th>
+                        <th style="padding: 12px 15px;">Growth</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd;"><strong>B2B (Treatment)</strong></td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd;">$371.4M</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd;">$748.1M</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd; color: green;"><strong>+$376.7M</strong></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd;"><strong>B2C (Control)</strong></td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd;">$360.2M</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd;">$479.6M</td>
+                        <td style="padding: 12px 15px; border-bottom: 1px solid #ddd; color: green;"><strong>+$119.5M</strong></td>
+                    </tr>
+                </table>
 
-                <div class="analogy" style="background: #e8f5e9; border-left: 4px solid #2e7d32;">
-                    <strong>The Result:</strong> The Difference-in-Difference value is approximately <strong>$257 Million</strong>. <br><br>
-                    This means that being a "Shovel Seller" (B2B) in the alternative protein gold rush was worth an extra quarter-billion dollars in funding compared to being a "Gold Digger" (B2C consumer brand).
+                <p>When we subtract the B2C growth ($119.5M) from the B2B growth ($376.7M), we get our Difference-in-Differences value:</p>
+
+                <div class="analogy" style="background: #e8f5e9; border-left: 4px solid #2e7d32; text-align: center; font-size: 1.2em;">
+                    <strong>DiD Effect = $257.2 Million</strong>
                 </div>
-                
-                <p>This confirms the "Intel Inside" business logic: as the consumer market became saturated with burger brands, investors shifted their capital upstream to the technology and ingredients that power the whole industry.</p>
-            </div>
 
-            <div class="section">
-                <h2 id="acknowledgement">Acknowledgement and Reference</h2>
-                <p>This analysis was conducted using a proprietary dataset I personally collected and cleaned, aggregating information on over 2,000 companies in the global alternative protein sector.</p>
-                
-                <p>References consulted for the Methodology:</p>
-                <ul>
-                    <li>Facure, M. (n.d.). <em>Causal Inference for the Brave and True: Difference-in-Differences</em>. <a href="https://matheusfacure.github.io/python-causality-handbook/13-Difference-in-Differences.html" target="_blank">Link</a>. (This was my primary guide for understanding the parallel trends assumption).</li>
-                    <li>Angrist, J. D., & Pischke, J. (2014). <em>Mastering 'Metrics: The Path from Cause to Effect</em>. Princeton University Press.</li>
-                </ul>
+                <p>This means that being a "Shovel Seller" (B2B) in the alternative protein gold rush was worth an extra <strong>$257 million</strong> in funding on average compared to being a "Gold Digger" (B2C consumer brand). This confirms the hypothesis: smart money pivoted upstream to infrastructure.</p>
+
+                <figure style="margin: 30px 0; text-align: center;">
+                    <img src="b2b_vs_b2c_did_plot.png" alt="Graph showing B2B fundraising skyrocketing past B2C after 2019" style="max-width: 100%; border: 1px solid #ddd;">
+                    <figcaption style="margin-top: 10px; font-style: italic; color: #666;">Figure 1: The "Picks and Shovels" effect. Note the sharp divergence after the red dashed line (2019).</figcaption>
+                </figure>
             </div>
 
             <hr>
@@ -292,9 +327,9 @@ print(did_stats)</code></pre>
 </div>
 
 <script>
-// Scroll spy for table of contents
+// Scroll spy logic for the Table of Contents
 document.addEventListener('DOMContentLoaded', function() {
-    const sections = document.querySelectorAll('h2[id]');
+    const sections = document.querySelectorAll('h2[id], h3[id]');
     const navLinks = document.querySelectorAll('.toc-sidebar a[data-section]');
     
     const observerOptions = {
