@@ -18,6 +18,34 @@
             background-color: #f7fafc;
         }
 
+        .breadcrumb {
+            text-align: center; 
+            margin-bottom: 40px;
+            padding-top: 10px;
+        }
+
+        .breadcrumb a {
+            display: inline-block;
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 12px 30px;  
+            border-radius: 50px;  
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .breadcrumb a:hover {
+            background-color: #3182ce;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+            border-color: #3182ce;
+        }
+        
         .main-wrapper {
             display: flex;
             max-width: 1400px;
@@ -308,9 +336,8 @@
         <div class="container">
             <section id="introduction">
                 <h1>Impacts of COVID-19 on Alternative Protein Industry Analysis with Difference-in-Differences</h1>
-                <p class="subtitle">A research journey exploring causal inference methods in the context of COVID-19's impact on venture capital funding</p>
                 <p class="subtitle">Built and written by Gabby Bui</p>
-                <p class="subtitle">Github: ...</p>
+                <p class="subtitle">Github: <a href="https://github.com/gabby-bui/difference-in-differences">https://github.com/gabby-bui/difference-in-differences</a></p>
 
                 <div class="intro-section">
                     <p>This project started as a learning experience since I worked as an undergraduate research assistant, and one of my main goals is to better understand difference-in-differences (DiD) methodology through hands-on application. Rather than just reading about causal inference in textbooks, I wanted to see how these methods work with real data, real questions, and real challenges.</p>
@@ -322,7 +349,7 @@
             <section id="background">
                 <h2>Background</h2>
                 
-                <p>TThis analysis is part of my research assistantship with Khoa Anh Tran, a PhD candidate at INSEAD. Our broader project examines investment patterns in the alternative protein industry, and this particular analysis focuses on understanding whether COVID-19 represented a structural break in how investors approached different types of companies in this sector.</p>
+                <p>This analysis is part of my research assistantship with Khoa Anh Tran, a PhD candidate at INSEAD. Our broader project examines investment patterns in the alternative protein industry, and this particular analysis focuses on understanding whether COVID-19 represented a structural break in how investors approached different types of companies in this sector.</p>
 
                 <p>The alternative protein industry includes companies developing plant-based meats, cultivated meat, fermentation-derived proteins, and other novel protein sources. Some companies specialize exclusively in these technologies (what we call "specialized firms"), while others maintain diversified portfolios that include both alternative proteins and other business lines (what we call "diversified firms"). This research question matters as when COVID-19 hit, traditional meat supply chains faced unprecedented disruptions, processing plants became COVID hotspots, and countries started worrying about protein supply security. We might think this would benefit all alternative protein companies equally, but there's also a reason to believe specialized firms could have benefited more.</p>
 
@@ -635,21 +662,16 @@ strong multicollinearity or other numerical problems.</pre>
 
         <p>So what did I actually find? The evidence suggests COVID-19 did shift investor preferences toward specialized alternative protein companies, but the effect was modest and the evidence is not rock-solid. Specialized firms experienced about a 2 percentage point larger increase in funding probability compared to diversified firms, which is economically meaningful given the baseline probabilities, but this needs to be interpreted carefully given the marginal statistical significance and potential parallel trends violation.</p>
 
-        <p>The broader pattern is clearer: COVID-19 boosted funding for the entire alternative protein sector. Both specialized and diversified firms benefited substantially. The pandemic seems to have served as a focusing event that heightened awareness of supply chain vulnerabilities and food system risks, making investors more receptive to alternative protein solutions generally.</p>
+        <p>The broader pattern is that COVID-19 boosted funding for the entire alternative protein sector. Both specialized and diversified firms benefited substantially. The pandemic seems to have served as a focusing event that heightened awareness of supply chain vulnerabilities and food system risks, making investors more receptive to alternative protein solutions generally.</p>
 
         <p>Whether specialized firms benefited even more than diversified firms remains somewhat uncertain given the methodological limitations, but there's suggestive evidence that they did. This makes sense given the logic: if COVID-19 made investors more convinced about the fundamental promise of alternative proteins, a pure play would be more attractive than a diversified company where alternative proteins are just one part of the business.</p>
 
-        <h3>Limitations and Future Directions</h3>
+        <p>However, this analysis still has several important limitations that future work could address. First, the parallel trends assumption appears somewhat violated, with specialized firms already growing faster before COVID-19. Using alternative control groups or more sophisticated synthetic control methods might provide more robust estimates. Second, I haven't controlled for any company-specific characteristics beyond their founding year and specialization status. Companies differ in size, technology platform, geographic location, and many other factors that might affect both their pre-COVID trajectories and their post-COVID funding outcomes. Adding these controls could help isolate the true effect of COVID-19 more precisely. Third, my "treatment" cutoff of 2020 is somewhat arbitrary. COVID-19 emerged gradually over early 2020, and different regions were affected at different times. A more refined analysis might use variation in when different companies' local markets were hit by COVID disruptions, though this would require more detailed data. Fourth, I'm treating all post-2020 years as equivalent, but the pandemic's effects likely changed over time. An event study design that estimates separate effects for 2020, 2021, 2022, etc. would show whether the boost to specialized firms was immediate, delayed, temporary, or persistent. Finally, my outcome variable is simply whether companies raised funding (yes/no), not how much funding they raised or on what terms. Looking at funding amounts, valuations, or even patent filings and hiring as alternative outcomes could provide a richer picture of how COVID-19 affected these companies.</p>
 
-        <p>This analysis has several important limitations that future work could address. First, the parallel trends assumption appears somewhat violated, with specialized firms already growing faster before COVID-19. Using alternative control groups or more sophisticated synthetic control methods might provide more robust estimates. Second, I haven't controlled for any company-specific characteristics beyond their founding year and specialization status. Companies differ in size, technology platform, geographic location, and many other factors that might affect both their pre-COVID trajectories and their post-COVID funding outcomes. Adding these controls could help isolate the true effect of COVID-19 more precisely. Third, my "treatment" cutoff of 2020 is somewhat arbitrary. COVID-19 emerged gradually over early 2020, and different regions were affected at different times. A more refined analysis might use variation in when different companies' local markets were hit by COVID disruptions, though this would require more detailed data. Fourth, I'm treating all post-2020 years as equivalent, but the pandemic's effects likely changed over time. An event study design that estimates separate effects for 2020, 2021, 2022, etc. would show whether the boost to specialized firms was immediate, delayed, temporary, or persistent. Finally, my outcome variable is simply whether companies raised funding (yes/no), not how much funding they raised or on what terms. Looking at funding amounts, valuations, or even patent filings and hiring as alternative outcomes could provide a richer picture of how COVID-19 affected these companies.</p>
-
-        <div class="section-divider"></div>
-
-        <div class="acknowledgments">
             </section>
 
             <section id="acknowledgments" class="acknowledgments">
-                <h2>Acknowledgments and References</h2>
+                <h2>Acknowledgments and references</h2>
             
             <p>This research would not have been possible without the support and guidance of several people and resources.</p>
             
